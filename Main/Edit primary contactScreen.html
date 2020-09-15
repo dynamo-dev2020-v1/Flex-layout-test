@@ -1,0 +1,62 @@
+<!DOCTYPE html><html xmlns="http://dynamo.documill.com/schemas/HTMLScreen" id="Main/Edit primary contactScreen.html" name="Main/Select approverScreen.html"><head>
+  <meta charset="utf-8" />
+  <meta name="dynamo-type" content="form" />
+  <link rel="stylesheet" type="dynamo/css" href="Main/style.css" />
+</head>
+
+<body>
+  <div class="screen slds modal" aria-hidden="false" role="dialog">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <h2 class="slds-text-heading--medium">Approver contact information</h2>
+      </div>
+      <div class="slds-modal__content slds-p-around--medium">
+        <div class="group">
+          <p>First email is sent to this contact.<br /><br /></p><div class="checkbox-group slds-form--stacked" dyn-if="conf.shareType == 3">
+    <fieldset class="slds-form-element">
+      
+      <div class="slds-form-element__control">
+        <label class="slds-checkbox form-inline">
+          <input type="checkbox" name="allowApproverChangeFirstSigner" value="true" dyn-checked="alowChangeFirstSigner" />
+          <span class="slds-checkbox--faux"></span>
+          <span class="slds-form-element__label">Approver can change first signer</span>
+        </label>
+      </div>
+    </fieldset>
+  </div>
+          <div class="slds-form-element input-block">
+            <label class="slds-form-element__label">Name</label>
+            <div class="slds-form-element__control">
+              <input name="fullName" class="slds-input" type="text" placeholder="Placeholder Text" dyn-value="primaryContact.fullName" />
+            </div>
+          </div>
+          <div class="slds-form-element input-block">
+            <label class="slds-form-element__label">Email</label>
+            <div class="slds-form-element__control">
+              <input name="email" class="slds-input" type="email" placeholder="Placeholder Text" dyn-value="primaryContact.email" />
+            </div>
+          </div>
+          <div class="slds-form-element input-block">
+            <label class="slds-form-element__label">Company</label>
+            <div class="slds-form-element__control">
+              <input name="company" class="slds-input" type="text" placeholder="Placeholder Text" dyn-value="primaryContact.company" />
+            </div>
+          </div><div class="checkbox-group slds-form--stacked">
+    <fieldset class="slds-form-element">
+      
+      <div class="slds-form-element__control"></div>
+    </fieldset>
+  </div>
+        </div>
+      </div>
+      <div class="slds-modal__footer button-group">
+        <button class="slds-button slds-button--neutral" dyn-next="Return" name="Cancel" type="submit">Cancel</button>
+        <button class="slds-button slds-button--neutral slds-button--brand" dyn-next="Set primary contact" name="Save" type="submit">Save</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</body></html>

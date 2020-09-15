@@ -1,0 +1,137 @@
+
+<flowSequence xmlns="http://dynamo.documill.com/schemas/flow"
+              xmlns:cc="http://dynamo.documill.com/schemas/taglib/core/conditional"
+              xmlns:cl="http://dynamo.documill.com/schemas/taglib/core/loop"
+              xmlns:cv="http://dynamo.documill.com/schemas/taglib/core/var"
+              xmlns:dbg="http://dynamo.documill.com/schemas/taglib/debug"
+              xmlns:ddoc="http://dynamo.documill.com/schemas/taglib/dynamodoc"
+              xmlns:dt="http://dynamo.documill.com/schemas/taglib/date"
+              xmlns:fl="http://dynamo.documill.com/schemas/taglib/core/flow"
+              xmlns:fo="http://dynamo.documill.com/schemas/taglib/format"
+              xmlns:fs="http://dynamo.documill.com/schemas/taglib/formselect"
+              xmlns:htmlex="http://dynamo.documill.com/schemas/taglib/html/external"
+              xmlns:pdf="http://dynamo.documill.com/schemas/taglib/pdf"
+              xmlns:sfch="http://dynamo.documill.com/schemas/taglib/salesforce/chatter"
+              xmlns:sfcrud="http://dynamo.documill.com/schemas/taglib/salesforce/crud"
+              xmlns:sfem="http://dynamo.documill.com/schemas/taglib/salesforce/email"
+              xmlns:sff="http://dynamo.documill.com/schemas/taglib/salesforce/fields"
+              xmlns:sffile="http://dynamo.documill.com/schemas/taglib/salesforce/file"
+              xmlns:soql="http://dynamo.documill.com/schemas/taglib/salesforce/soql"
+              xmlns:wizard="http://dynamo.documill.com/schemas/taglib/wizard"
+              xmlns:xlsxd="http://dynamo.documill.com/schemas/taglib/xlsxdata"
+              xmlns:es="http://dynamo.documill.com/schemas/taglib/esignature"
+              xmlns:dex="http://dynamo.documill.com/schemas/taglib/docx/external"
+              xmlns:sfpub="http://dynamo.documill.com/schemas/taglib/salesforce/publish"
+              xmlns:pdfsig="http://dynamo.documill.com/schemas/taglib/pdf/signature"
+              id="Update"
+              name="Subroutine Flow">
+  <startFlow id="Main">
+    <events>
+      <defaultEvent step="Start update" />
+    </events>
+    <steps>
+      <step id="Start update" name="Start update" message="Preparing to Save">
+        <logic>
+          <!-- ** INPUT VARIABLES ** -->
+          <!-- noSave -->
+          <!-- documentTemplateName -->
+          <!-- fileName -->
+          <!-- filePath -->
+          <!-- useDocumentEditor -->
+          <!-- storedFiles -->
+          <!-- edit_ -->
+          <!-- dynDocId -->
+          <!-- versionNumber -->
+          <!-- ** OUTPUT VARIABLES ** -->
+          <!-- versionNumberSaved -->
+          <!-- versionNumber -->
+          <!-- selectedFile -->
+          <!-- conf.fileHTML -->
+          <!-- conf.filePDF -->
+          <!-- saveMessage -->
+          <!-- saveTime -->
+          <!-- flowStatus -->
+          <fl:next step="Compose" label="" />
+        </logic>
+      </step>
+      <step id="Compose" name="Compose" onError="Error">
+        <logic >
+          <fl:composeContent template="${doc[documentTemplateName]}" var="composedDoc" hideFromDataTab="true" editable="false" automaticElementIDs="false" />
+          <htmlex:scanHeadings var="headings" file="${composedDoc}" selectors="" />
+          <cc:if test="${not empty headings}">
+            <fl:composeContent template="${doc[documentTemplateName]}" var="composedDoc" hideFromDataTab="true" editable="false" automaticElementIDs="false" />
+          </cc:if>
+          <fl:next step="Create PDF" />
+        </logic>
+      </step>
+      <step id="Create PDF" name="Create PDF" onError="Error">
+        <logic>
+          <pdf:exportPDF var="fullPDF" document="${composedDoc}" />
+          <cv:set var="fileName" value="${fullPDF.title}" hideFromDataTab="true" />
+          <cc:choose>
+            <cc:when test="${noSave == true}">
+              <fl:next step="OK" label="No save" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next step="Save files" label="Save" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Save files" name="Save files" message="Saving" onError="Error">
+        <logic>
+          <cc:if test="${not empty fullPDF}">
+            <cv:storeStringSet prefix="edit_" storeTo="${fullPDF}" />
+            <cv:storeString key="version" value="${versionNumber}" storeTo="${fullPDF}" />
+            <sffile:createContentVersion contentDocumentId="${conf.filePDF}"
+                                         doc="${fullPDF}"
+                                         linkToId="${dynDocId}"
+                                         pathOnClient="dynamo/latest.pdf"
+                                         reasonForChange=""
+                                         title="${fileName}"
+                                         var="storedPDF" />
+            <cv:addMapEntry key="filePDF" map="${conf}" value="${storedPDF.contentDocumentId}" />
+          </cc:if>
+          <cc:if test="${not empty composedDoc}">
+            <sffile:createContentVersion contentDocumentId="${conf.fileHTML}"
+                                         doc="${composedDoc}"
+                                         linkToId="${dynDocId}"
+                                         pathOnClient="dynamo/latest.html"
+                                         reasonForChange=""
+                                         title="${dynDocId}-html"
+                                         var="storedHTML" />
+            <cv:addMapEntry key="fileHTML" map="${conf}" value="${storedHTML.contentDocumentId}" />
+          </cc:if>
+          <dt:setDateTime var="saveTime" />
+          <cv:set var="versionNumberSaved" value="${versionNumber}" />
+          <cv:addMapEntry key="versionNumber" map="${conf}" value="${versionNumber}" />
+          <cv:set value="${versionNumber+1}" var="versionNumber" />
+          <cv:set var="saveMessage" value="saved" />
+          <cv:toJSON value="${conf}" var="confJSON" />
+          <sfcrud:update type="dynamo__Dynamo_Document__c">
+            <sfcrud:field name="Id" value="${dynDocId}" />
+            <sfcrud:field name="dynamo__Locked__c" value="${false}" />
+            <sfcrud:field name="dynamo__Configuration_JSON__c" value="${confJSON}" />
+          </sfcrud:update>
+          <sfcrud:create type="dynamo__Dynamo_Document_Event__c" var="dview">
+            <sfcrud:field name="dynamo__Type__c" value="Version" />
+            <sfcrud:field name="dynamo__Dynamo_Document__c" value="${dynDocId}" />
+            <sfcrud:field name="dynamo__Message__c" value="Version ${versionNumberSaved} saved by ${UserInfo.fullName}" />
+          </sfcrud:create>
+          <fl:next label="" step="OK" />
+        </logic>
+      </step>
+      <step id="OK" name="OK">
+        <logic>
+          <cv:set var="noSave" />
+          <cv:set var="flowStatus" value="ok" />
+        </logic>
+      </step>
+      <step id="Error" name="Error">
+        <logic>
+          <cv:set var="flowStatus" value="error" />
+        </logic>
+      </step>
+    </steps>
+  </startFlow>
+</flowSequence>

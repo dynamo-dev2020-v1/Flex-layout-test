@@ -1,0 +1,80 @@
+<html xmlns="http://www.w3.org/1999/xhtml" id="Main/Select filesScreen.html" name="Main/Select AttachmentsScreen.html">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="form" name="dynamo-type" />
+  <link href="Main/style.css" rel="stylesheet" type="dynamo/css" />
+</head>
+
+<body>
+  <div aria-hidden="false" class="screen slds modal" role="dialog">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <h2 class="slds-text-heading--medium" dyn-content="dialogTitle">Select Attachments</h2>
+      </div>
+      <div class="slds-modal__content slds-p-around--medium">
+        <div>
+          <dyn-multi-select name="storedFiles">
+            <table class="no-borders">
+              <colgroup>
+                <col style="width: 40%;" />
+                <col style="width: 20%;" />
+                <col style="width: 40%;" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td style="width: 40%;">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for="dynMultiSelectOptions">Available
+                        </label>
+                      <div class="slds-form-element__control">
+                        <select class="slds-select dynMultiSelect-options" id="dynMultiSelectOptions" size="10" style="width:100%; height: 22.50rem!important;" multiple="multiple">
+                            <option dyn-content="file.Title" dyn-repeat="availableFiles" dyn-repeat-var="file" dyn-value="file.Id" value="undefined">undefined</option>
+                          </select>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="width: 20%; text-align: center;">
+                    <button class="slds-button slds-button--neutral slds-button--small dynMultiSelect-add" name="Add" style="width: 100px; margin-bottom: 5px;" type="button">Add
+                      </button><br />
+                    <button class="slds-button slds-button--neutral slds-button--small dynMultiSelect-remove" style="width: 100px; margin-bottom: 5px;" type="button">Remove
+                      </button>
+                  </td>
+                  <td style="width: 40%;">
+                    <div class="slds-form-element">
+                      <label class="slds-form-element__label" for="dynMultiSelectSelected">Added
+                        </label>
+                      <div class="slds-form-element__control">
+                        <select class="slds-select dynMultiSelect-selected" id="dynMultiSelectSelected" size="10" style="width:100%; height: 22.50rem!important;" multiple="multiple">
+                            <option dyn-content="file.Title" dyn-if="not empty selectedFiles" dyn-repeat="selectedFiles" dyn-repeat-var="file" dyn-value="file.Id" value="undefined">undefined</option>
+                          </select>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td />
+                  <td />
+                  <td>
+                    <button class="slds-button slds-button--neutral slds-button--small dynMultiSelect-up" type="button">Up
+                      </button>
+                    <button class="slds-button slds-button--neutral slds-button--small dynMultiSelect-down" type="button">Down
+                      </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </dyn-multi-select>
+        </div>
+      </div>
+      <div class="slds-modal__footer button-group">
+        <button class="slds-button slds-button--neutral" dyn-next="Cancel" dyn-submit="false" name="cancel">Cancel</button>
+        <button class="slds-button slds-button--neutral slds-button--brand" dyn-next="OK" name="save">Save</button>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,447 @@
+@page {
+  size: A4;
+  margin-top: 2cm;
+  margin-right: 2cm;
+  margin-bottom: 1.5cm;
+  margin-left: 2cm;
+  @top-left {
+  }
+  @bottom-right {
+  }
+  @top-center {
+  }
+  @bottom-center {
+  }
+  @top-right-corner {
+  }
+  @left-middle {
+  }
+}
+@media print {
+  .no-print {
+    display: none;
+  }
+  .dyn-tagged {
+    background-color: transparent !important;
+  }
+  .document .toc-block a::after {
+    content: leader(dotted) target-counter(attr(href url), page);
+  }
+}
+@-ro-preferences {
+  pages-counter-offset: 0;
+}
+
+@media screen {
+  .document {
+  }
+  .document .hidden-margin-box {
+    display: none;
+  }
+  
+  input {
+    border: none;
+    outline: 1px dotted lightblue;
+  }
+  
+  input:hover {
+    outline: 1px dashed lightblue;
+  }
+  
+  input:focus {
+    outline: 1px solid lightblue;
+  }  
+    
+  div[contenteditable="true"] {
+    outline: 1px dotted lightblue;
+  }  
+  
+  div[contenteditable="true"]:hover {
+    outline: 1px dashed lightblue;
+  }
+
+  div[contenteditable="true"]:focus {
+    outline: 1px solid lightblue;
+  }  
+  
+}
+
+
+.document {
+  counter-reset: h1;
+  font-size: 12pt;
+  font-family: Sans-Serif;
+  color: black;
+  line-height: normal;
+}
+.document .large-font {
+  --dyn-style-label: Font large (x 1.6);
+  font-size: 1.6em;
+}
+.document .small-font {
+  --dyn-style-label: Font small (x 0.75);
+  font-size: 0.75em;
+}
+.document .bold {
+  --dyn-style-label: Font bold;
+  font-weight: bold;
+}
+.document .italic {
+  --dyn-style-label: Font italic;
+  font-style: italic;
+}
+.document .align-left {
+  --dyn-style-label: Align left;
+  text-align: left;
+}
+.document .align-center {
+  --dyn-style-label: Align center;
+  text-align: center;
+}
+.document .align-right {
+  --dyn-style-label: Align right;
+  text-align: right;
+}
+.document .highlight {
+  --dyn-style-label: Highlight;
+  background-color: yellow;
+}
+.document .no-margin {
+  --dyn-style-label: Margin 0;
+  margin: 0;
+}
+.document .valing-top {
+  --dyn-style-label: Vertical align top;
+  vertical-align: top;
+}
+.document .valing-middle {
+  --dyn-style-label: Vertical align middle;
+  vertical-align: middle;
+}
+.document .valing-bottom {
+  --dyn-style-label: Vertical align bottom;
+  vertical-align: bottom;
+}
+.document .superscript {
+  --dyn-style-label: Superscript;
+  vertical-align: super;
+  font-size: smaller;
+}
+.document .subscript {
+  --dyn-style-label: Subscript;
+  vertical-align: sub;
+  font-size: smaller;
+}
+.document .footnote {
+  --dyn-style-label: Footnote;
+  float: footnote;
+}
+.document .numbering {
+  --dyn-style-label: Heading numbering;
+}
+.document h1.numbering::before {
+  counter-increment: h1;
+  content: counter(h1) " ";
+}
+.document h2.numbering::before {
+  counter-increment: h2;
+  content: counter(h1) "." counter(h2) " ";
+}
+.document h3.numbering::before {
+  counter-increment: h3;
+  content: counter(h1) "." counter(h2) "." counter(h3) " ";
+}
+.document div {
+  line-height: normal;
+}
+.document div.group {
+  line-height: normal;
+}
+.document p {
+  margin-top: 0.5em;
+  margin-right: 0;
+  margin-bottom: 0.5em;
+  margin-left: 0;
+  font-size: 1em;
+  font-weight: normal;
+}
+.document h1 {
+  counter-reset: h2;
+  margin-top: 0.67em;
+  margin-right: 0;
+  margin-bottom: 0.67em;
+  margin-left: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+.document h2 {
+  counter-reset: h3;
+  margin-top: 0.5em;
+  margin-right: 0;
+  margin-bottom: 0.5em;
+  margin-left: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #000000;
+}
+.document h3 {
+  counter-reset: h4;
+  margin-top: 0.2em;
+  margin-right: 0;
+  margin-bottom: 0.2em;
+  margin-left: 0;
+  font-size: 1.17em;
+  font-weight: bold;
+}
+.document h4 {
+  margin-top: 0.2em;
+  margin-right: 0;
+  margin-bottom: 0.2em;
+  margin-left: 0;
+  font-size: 1em;
+  font-weight: bold;
+}
+.document h5 {
+  margin-top: 0.5em;
+  margin-right: 0;
+  margin-bottom: 0.5em;
+  margin-left: 0;
+  font-size: 1.17em;
+  font-weight: normal;
+}
+.document ul {
+  display: block;
+  list-style-type: disc;
+  list-style-position: outside;
+  margin-top: 0.2em;
+  margin-right: 0;
+  margin-bottom: 0.2em;
+  margin-left: 0;
+  padding-left: 40px;
+}
+.document ol {
+  display: block;
+  list-style-type: decimal;
+  list-style-position: outside;
+  margin-top: 1em;
+  margin-right: 0;
+  margin-bottom: 1em;
+  margin-left: 0;
+  padding-left: 40px;
+}
+.document li {
+  display: list-item;
+  margin-top: 0cm;
+  margin-bottom: 0cm;
+}
+.document table {
+  margin-top: 1.12em;
+  margin-right: 0;
+  margin-bottom: 1.12em;
+  margin-left: 0;
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.document thead {
+}
+.document tbody {
+}
+.document th {
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: black;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-right-color: black;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-left-color: black;
+  font-weight: bold;
+  word-wrap: break-word;
+  padding: 3px;
+  padding-top: 3px;
+  padding-right: 3px;
+  padding-bottom: 0px;
+  padding-left: 3px;
+}
+.document td {
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: black;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-right-color: black;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-left-color: black;
+  padding-top: 3px;
+  padding-right: 3px;
+  padding-bottom: 0px;
+  padding-left: 3px;
+}
+.document td p {
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+}
+.document .no-borders {
+  --dyn-style-label: Borders none;
+  border-top-style: none;
+  border-right-style: none;
+  border-bottom-style: none;
+  border-left-style: none;
+}
+.document .no-borders th {
+  border-top-style: none;
+  border-right-style: none;
+  border-bottom-style: none;
+  border-left-style: none;
+  font-weight: bold;
+  text-align: center;
+}
+.document .no-borders td {
+  border-top-style: none;
+  border-right-style: none;
+  border-bottom-style: none;
+  border-left-style: none;
+}
+.document .page-number {
+}
+.document .page-number:after {
+  content: counter(page);
+}
+.document .page-count {
+}
+.document .page-count:before {
+  content: counter(pages);
+}
+.document .page-break-before {
+  --dyn-style-label: Page break before;
+  break-before: always;
+}
+.document .page-break-avoid {
+  --dyn-style-label: Page break avoid;
+  break-inside: avoid;
+}
+.document .color-white {
+  --dyn-style-label: Color white;
+  color: #ffffff;
+}
+.document .toc-block {
+  --dyn-style-label: Table of Content;
+}
+.document .toc-block a {
+  color: black;
+}
+.document .border-bottom {
+  --dyn-style-label: Border bottom;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #000000;
+}
+.document .background-color-oldlace {
+  --dyn-style-label: Background color OldLace;
+  background-color: #fdf5e6;
+}
+.document .background-color-transparent {
+  --dyn-style-label: Background color transparent;
+  background-color: transparent;
+}
+.document .page-break-after {
+  --dyn-style-label: Page break after;
+  break-after: always;
+}
+
+.document .flex-row {
+  --dyn-style-label: Flex row container;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+}
+
+.document .flex-row > p {
+  flex: 0 1 auto;
+}
+
+.document .border-silver-dotted {
+  --dyn-style-label: Border silver dotted;
+  border: 1px dotted silver;
+}
+
+.document .padding-1em {
+  --dyn-style-label: Padding 1em;
+  padding: 1em;
+}
+
+.document .margin-1em {
+  --dyn-style-label: margin 1em;
+  margin: 1em;
+}
+
+
+.document .column-50-50 {
+  --dyn-style-label: Column 50 50;
+  display: flex;
+  flex-direction: row;
+  flex-wrapX: wrap;
+  justify-contentX: flex-start;
+  align-itemsX: stretch;
+  align-contentX: stretch;
+}
+
+.document .column-50-50 > p {
+  box-sizing: border-box;
+  width: 50%;
+}
+
+.document .column-50-50 > div {
+  box-sizing: border-box;
+  width: 50%;
+}
+
+.document .test-column {
+  --dyn-style-label: Test column;
+  min-width: 200px; 
+  padding: 1em;
+  border: 1px dotted silver;
+}
+
+
+#img-container {
+  position: relative;
+  text-align: center;
+}
+
+#img1 {
+ max-width: 100%;
+}
+
+#img-centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media only screen and (max-width: 600px) {
+  
+  .document .column-50-50 {
+    flex-direction: column;
+  }
+  
+  .document .column-50-50 > div {
+    width: 100%;
+  }
+}
+

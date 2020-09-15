@@ -1,0 +1,34 @@
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" id="Main/Publication readyScreen.html" name="E-sign ready-1Screen"><head>
+  <meta charset="utf-8" />
+  <meta name="dynamo-type" content="form" />
+  <link rel="stylesheet" type="dynamo/css" href="Main/style.css" />
+</head>
+
+<body>
+  <div class="screen slds modal" aria-hidden="false" role="dialog">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <h2 class="slds-text-heading--medium">Document is ready to be shared</h2>
+      </div>
+      <div class="slds-modal__content slds-p-around--medium">
+        <div class="group">
+          <p dyn-if="conf.shareType == 1 or conf.shareType == 3">Document share link will be sent to&#160;&#160;<span dyn-content="conf.primaryContact.fullName" class="bold">[primaryContact]</span>&#160; (<span class="inline dyn-tagged" dyn-content="conf.primaryContact.email">[email]</span>) for approval.<br /></p><p dyn-if="conf.allowApproverChangeFirstSigner"><span class="inline dyn-tagged bold" dyn-content="conf.primaryContact.fullName">[primaryContact]</span>&#160;is allowed to change first signer.</p><p></p>
+          <p class="bold" dyn-if="conf.shareType == 2 or conf.shareType == 3">Document Signers in Singing order</p>
+          <p dyn-repeat="conf.signers" dyn-repeat-var="signer" dyn-repeat-var-status="signerStatus" dyn-if="conf.shareType == 2 or conf.shareType == 3">
+            <span dyn-content="signerStatus.count">i</span>.&#160;
+            <span class="inline dyn-tagged" dyn-content="signer.fullName">&lt;signer name&gt;</span>,&#160;
+            <span class="inline dyn-tagged" dyn-content="signer.company">&lt;company&gt;</span>&#160;
+            (<span class="inline dyn-tagged" dyn-content="signer.email">&lt;signer email&gt;</span>)</p>
+        </div>
+      </div>
+      <div class="slds-modal__footer button-group">
+        <button class="slds-button slds-button--neutral" dyn-next="Return" type="submit" name="cancel">Cancel</button>
+        <button class="slds-button slds-button--neutral slds-button--brand" dyn-next="Share now" type="submit" name="share">Share</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</body></html>

@@ -1,0 +1,98 @@
+
+.screen {
+  background-color: white;
+}
+
+.screen.modal {
+  background-color: rgba(168, 183, 199, 0.4);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.screen.default {
+  width: 50%;
+  min-width: 400px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+
+.screen .group {
+  min-height: 30px;
+  margin: 4px;
+}
+
+.screen .large-font {
+  font-size: 20pt;
+}
+
+.screen .small-font {
+  font-size: 10pt;
+}
+
+.screen .bold {
+  font-weight: bold;
+}
+
+.screen .italic {
+  font-style: italic;
+}
+
+.screen .align-right {
+  text-align: right;
+}
+
+.screen header {
+  margin: 0;
+  height: 0px;
+}
+
+.screen footer {
+  margin: 0;
+  height: 0px;
+}
+
+.screen h1 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+
+.screen p {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.screen table {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.screen th {
+  border: 1px solid #ccc;
+}
+
+.screen td {
+  border: 1px solid #ccc;
+}
+
+.screen .button-group button {
+  margin-right: 10px;
+}
+
+.screen .slds-button--brand {}

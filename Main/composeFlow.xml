@@ -1,0 +1,1098 @@
+
+<flowSequence xmlns="http://dynamo.documill.com/schemas/flow"
+              xmlns:cc="http://dynamo.documill.com/schemas/taglib/core/conditional"
+              xmlns:cl="http://dynamo.documill.com/schemas/taglib/core/loop"
+              xmlns:cv="http://dynamo.documill.com/schemas/taglib/core/var"
+              xmlns:dbg="http://dynamo.documill.com/schemas/taglib/debug"
+              xmlns:ddoc="http://dynamo.documill.com/schemas/taglib/dynamodoc"
+              xmlns:dt="http://dynamo.documill.com/schemas/taglib/date"
+              xmlns:fl="http://dynamo.documill.com/schemas/taglib/core/flow"
+              xmlns:fo="http://dynamo.documill.com/schemas/taglib/format"
+              xmlns:fs="http://dynamo.documill.com/schemas/taglib/formselect"
+              xmlns:htmlex="http://dynamo.documill.com/schemas/taglib/html/external"
+              xmlns:pdf="http://dynamo.documill.com/schemas/taglib/pdf"
+              xmlns:sfch="http://dynamo.documill.com/schemas/taglib/salesforce/chatter"
+              xmlns:sfcrud="http://dynamo.documill.com/schemas/taglib/salesforce/crud"
+              xmlns:sfem="http://dynamo.documill.com/schemas/taglib/salesforce/email"
+              xmlns:sff="http://dynamo.documill.com/schemas/taglib/salesforce/fields"
+              xmlns:sffile="http://dynamo.documill.com/schemas/taglib/salesforce/file"
+              xmlns:soql="http://dynamo.documill.com/schemas/taglib/salesforce/soql"
+              xmlns:wizard="http://dynamo.documill.com/schemas/taglib/wizard"
+              xmlns:xlsxd="http://dynamo.documill.com/schemas/taglib/xlsxdata"
+              xmlns:es="http://dynamo.documill.com/schemas/taglib/esignature"
+              xmlns:dex="http://dynamo.documill.com/schemas/taglib/docx/external"
+              xmlns:sfpub="http://dynamo.documill.com/schemas/taglib/salesforce/publish"
+              xmlns:pdfsig="http://dynamo.documill.com/schemas/taglib/pdf/signature"
+              id="compose"
+              name="Compose Flow"
+              endMessage="Going back to previous screen...">
+  <startFlow id="Start">
+    <events>
+      <defaultEvent step="Start" />
+    </events>
+    <steps>
+      <step id="Start" name="Start">
+        <logic >
+          <!-- Main id -->
+          <cv:set value="" var="id" />
+          <cv:set value="${param.id}" var="id" />
+          <cc:if test="${empty id}">
+            <cv:set var="errorMessageCustom" value="Id prameter not defined" />
+            <fl:start segment="Error" label="No id parameter" />
+          </cc:if>
+          <!-- Template id -->
+          <cv:set var="templateId" value="" hideFromDataTab="true" />
+          <cv:set var="templateId" value="${param.templateId}" hideFromDataTab="true" />
+          <cc:if test="${empty templateId}">
+            <cv:set var="errorMessageCustom" value="Template ID is empty. Save template before doing test run." />
+            <fl:start segment="Error" label="Template not saved" />
+          </cc:if>
+          <!-- Common subtemplate -->
+          <cc:choose>
+            <cc:when test="${not empty param.dynamoCommonEngage}">
+              <sffile:load var="dynamoCommonEngage" recordId="${param.dynamoCommonEngage}" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="dynamoCommonEngage" value="dynamoCommon-engage-v1-DRAFT" />
+            </cc:otherwise>
+          </cc:choose>
+          <cv:set var="dynDocId" value="" />
+          <cv:set var="postID" value="" hideFromDataTab="true" />
+          <cv:set var="viewMode" value="" hideFromDataTab="true" />
+          <cv:set var="conf" value="" hideFromDataTab="true" />
+          <cv:set var="dynDocStatus" value="" />
+          <cv:set var="dynDocName" value="" />
+          <cv:set var="documentOptions" value="" hideFromDataTab="true" />
+          <cv:set var="versionNumber" value="" />
+          <cv:set var="versionNumberSaved" value="" />
+          <cv:set var="fullPDF" value="" hideFromDataTab="true" />
+          <cv:set var="composedDoc" value="" hideFromDataTab="true" />
+          <cv:set var="approverId" value="" />
+          <cv:set var="approvers" value="" />
+          <cv:set var="publishURL" value="" />
+          <cv:set var="headings" />
+          <cv:set var="saveMessage" value="" />
+          <cv:set var="saveTime" value="" />
+          <cv:set var="useClausePane" value="" />
+          <cv:set var="useCommentPane" value="" />
+          <cv:set var="externalFeed" />
+          <cv:set var="documentTemplateName" value="Document" />
+          <cv:set var="noSave" />
+          <dt:setDate var="today" />
+          <cv:setMap var="editorSettings" hideFromDataTab="true">
+            <cv:addMapEntry key="contenteditable-editor" value="" />
+            <cv:addMapEntry key="contenteditable-nativespellcheck" value="true" />
+            <cv:addMapEntry key="contenteditable-toolbarcolor" value="#FFFFFF" />
+            <cv:addMapEntry key="contenteditable-filterpaste" value="true" />
+            <cv:addMapEntry key="contenteditable-toolbarcontainer" value="editable-toolbarContainer" />
+          </cv:setMap>
+          <!-- Formats -->
+          <fo:setBooleanFormat />
+          <fo:setCurrencyFormat pattern="" />
+          <fo:setDateFormat pattern="" />
+          <fo:setDateTimeFormat pattern="" />
+          <fo:setNumberFormat />
+          <fo:setPercentageFormat />
+          <fo:setDateTimeFormat pattern="HH:mm" name="justTime" />
+          <!-- Remove this? -->
+          <cv:set var="fileName" value="" hideFromDataTab="true" />
+          <cc:choose>
+            <cc:when test="${param.eventID == &apos;new&apos;}">
+              <fl:next label="New" step="New" />
+            </cc:when>
+            <cc:when test="${param.eventID == &apos;open&apos;}">
+              <fl:next label="Open" step="Open" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="errorMessageCustom" value="Invalid event ${param.eventID}" />
+              <fl:start label="Invalid event" segment="Error" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="New" name="New" onError="System error">
+        <logic>
+          <!-- Will be updated after main object query -->
+          <cv:set var="dynDocName" value="Dynamo Document" />
+          <cv:set var="dynDocStatus" value="Draft" />
+          <cv:setMap var="conf" />
+          <cv:toJSON value="${conf}" var="confJSON" />
+          <cc:choose>
+            <cc:when test="${not empty param.testDynDocId}">
+              <dbg:log level="WARNING" message="Test mode: Using existing dynamo document" />
+              <fl:next step="Reset for testing" />
+            </cc:when>
+            <cc:otherwise>
+              <sfcrud:create type="dynamo__Dynamo_Document__c" var="dynDocId">
+                <sfcrud:field name="Name" value="${dynDocName}" />
+                <cc:if test="${id.startsWith(&apos;006&apos;)}">
+                  <sfcrud:field name="dynamo__Opportunity__c" value="${id}" />
+                </cc:if>
+                <sfcrud:field name="dynamo__Parent_Record_ID__c" value="${id}" />
+                <sfcrud:field name="dynamo__Template_ID__c" value="${templateId}" />
+                <sfcrud:field name="dynamo__Document_Status__c" value="${dynDocStatus}" />
+                <sfcrud:field name="dynamo__Configuration_JSON__c" value="${confJSON}" />
+              </sfcrud:create>
+              <fl:next step="Query document" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Open" name="Open" onError="System error">
+        <logic>
+          <cc:choose>
+            <cc:when test="${not empty param.testDynDocId}">
+              <dbg:log level="WARNING" message="Test mode: Using existing dynamo document" />
+              <cv:set value="${param.testDynDocId}" var="dynDocId" />
+              <cv:set value="" var="id" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set value="${id}" var="dynDocId" />
+              <cv:set value="" var="id" />
+            </cc:otherwise>
+          </cc:choose>
+          <cv:set var="postID" value="${param.extra}" />
+          <fl:next label="init" step="Query document" />
+        </logic>
+      </step>
+      <step id="Query document" name="Query document">
+        <logic>
+          <sff:record var="dynDoc" type="dynamo__Dynamo_Document__c" recordID="${dynDocId}" fields="dynamo__Locked__c, dynamo__Last_Editor__r.Name, dynamo__Next_User__r.Id, dynamo__Next_User__r.Name, dynamo__Document_Status__c, dynamo__Publication_URL__c, Id, Name, dynamo__Configuration_JSON__c, dynamo__Parent_Record_ID__c, Owner.Name, Owner.Id, dynamo__Publication_Date__c, dynamo__Publication_Expires__c" hideFromDataTab="true" />
+          <cv:set var="id" value="${dynDoc.dynamo__Parent_Record_ID__c}" />
+          <cc:if test="${empty id}">
+            <cv:set var="errorMessageCustom" value="Parent object record ID is empty" />
+            <fl:start segment="Error" label="No parent" />
+          </cc:if>
+          <cv:set var="loadedDocName" value="${dynDoc.Name}" />
+          <cv:set var="dynDocName" value="${dynDoc.Name}" />
+          <cv:parseJSON value="${dynDoc.dynamo__Configuration_JSON__c}" var="conf" />
+          <cv:set var="approverId" value="${dynDoc.dynamo__Next_User__r.Id}" />
+          <cv:set var="publishURL" value="${dynDoc.dynamo__Publication_URL__c}" />
+          <cv:set var="publicationDate" value="${dynDoc.dynamo__Publication_Date__c}" />
+          <cv:set var="publicationExpires" value="${dynDoc.dynamo__Publication_Expires__c}" />
+          <cv:set value="${dynDoc.dynamo__Document_Status__c}" var="dynDocStatus" />
+          <cv:set var="versionNumberSaved" value="${conf.versionNumber}" />
+          <cc:choose>
+            <cc:when test="${not empty versionNumberSaved}">
+              <cv:set value="${versionNumberSaved+1}" var="versionNumber" hideFromDataTab="" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set value="1" var="versionNumber" hideFromDataTab="" />
+            </cc:otherwise>
+          </cc:choose>
+          <cc:if test="${not empty versionNumberSaved}" />
+          <cc:if test="${empty postID}">
+            <fl:setEndURL value="${sfdcServer}/lightning/r/${id}/view" />
+          </cc:if>
+          <!-- CUSTOMIZE: users for chatter mentions -->
+          <soql:query select="SELECT Id, Name, Division FROM User limit 20" var="mentionOptions" />
+          <fl:next step="Next" />
+        </logic>
+      </step>
+      <step id="Next" name="Next">
+        <logic>
+          <cc:choose>
+            <cc:when test="${event == &apos;new&apos;}">
+              <fl:start segment="Custom Data" label="Get SF data" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:start segment="Load Files" label="Load files" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Reset for testing" name="Reset for testing" onError="System error">
+        <logic>
+          <!-- Only for testing -->
+          <sfcrud:update type="dynamo__Dynamo_Document__c">
+            <sfcrud:field name="Id" value="${param.testDynDocId}" />
+            <sfcrud:field name="Name" value="${dynDocName}" />
+            <cc:if test="${id.startsWith(&apos;006&apos;)}">
+              <sfcrud:field name="dynamo__Opportunity__c" value="${id}" />
+            </cc:if>
+            <sfcrud:field name="dynamo__Parent_Record_ID__c" value="${id}" />
+            <sfcrud:field name="dynamo__Template_ID__c" value="${templateId}" />
+            <sfcrud:field name="dynamo__Document_Status__c" value="Draft" />
+            <sfcrud:field name="dynamo__Locked__c" value="${false}" />
+            <sfcrud:field name="dynamo__Last_Editor__c" value="${&apos;&apos;}" />
+            <sfcrud:field name="dynamo__Next_User__c" value="${&apos;&apos;}" />
+            <sfcrud:field name="dynamo__Publication_URL__c" value="${&apos;&apos;}" />
+            <sfcrud:field name="dynamo__Configuration_JSON__c" value="${confJSON}" />
+          </sfcrud:update>
+          <cv:set var="dynDocId" value="${param.testDynDocId}" />
+          <fl:next step="Query document" />
+        </logic>
+      </step>
+      <step id="System error" name="System error">
+        <logic>
+          <fl:start segment="Error" label="Error" />
+        </logic>
+      </step>
+    </steps>
+  </startFlow>
+  <standardFlow id="Load Files">
+    <events>
+      <defaultEvent step="Start" />
+    </events>
+    <steps>
+      <step id="Start" name="Start" onError="Error">
+        <logic>
+          <cc:choose>
+            <cc:when test="${dynDocStatus == &apos;Signed&apos;}">
+              <fl:next step="Load signed PDF" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;Draft&apos;}">
+              <fl:next step="Load editable areas" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;In Review&apos;}">
+              <fl:next step="Load editable areas" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;External New Version Request&apos;}">
+              <fl:next step="Load editable areas" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next step="Load composed files" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Load editable areas" name="Load editable areas" message="Loading previous version" onError="Error">
+        <logic>
+          <!-- Full updated PDF is generated later on -->
+          <cv:set var="fullPDF" value="" />
+          <cv:set var="composedDoc" value="" />
+          <cc:if test="${not empty conf.filePDF}">
+            <sffile:loadLatestContentVersion contentDocumentId="${conf.filePDF}" var="tempPDF" hideFromDataTab="true" />
+            <cv:set var="fileName" value="${tempPDF.fileName}" hideFromDataTab="true" />
+            <cv:restoreStringSet prefix="edit_" readFrom="${tempPDF}" />
+            <cv:set var="tempPDF" value="" />
+          </cc:if>
+          <fl:start segment=":next" />
+        </logic>
+      </step>
+      <step id="Load composed files" name="Load composed files" onError="Error">
+        <logic>
+          <cc:choose>
+            <cc:when test="${not empty conf.filePDF and not empty conf.fileHTML}">
+              <sffile:loadLatestContentVersion var="fullPDF" contentDocumentId="${conf.filePDF}" />
+              <sffile:loadLatestContentVersion var="composedDoc" contentDocumentId="${conf.fileHTML}" />
+              <cv:set var="fileName" value="${fullPDF.title}" hideFromDataTab="true" />
+              <fl:next step="No data load" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="errorMessageCustom" value="Files not found" />
+              <fl:next label="Files not found" step="Error" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Load signed PDF" name="Load signed PDF" onError="Error">
+        <logic>
+          <cc:if test="${not empty conf.finalPDF}">
+            <sffile:load var="fullPDF" recordId="${conf.finalPDF}" />
+          </cc:if>
+          <cc:choose>
+            <cc:when test="${not empty fullPDF}">
+              <cv:set var="fileName" value="${fullPDF.title}" hideFromDataTab="true" />
+              <fl:next step="No data load" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="errorMessageCustom" value="Signed PDF not found" />
+              <fl:start segment="Error" label="Signed PDF not found" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Error" name="Error">
+        <logic>
+          <cv:set var="flowStatus" value="error" hideFromDataTab="true" />
+          <fl:start segment="Error" />
+        </logic>
+      </step>
+      <step id="No data load" name="No data load">
+        <logic>
+          <dt:setDateTime var="lastDataRefresh"
+                          year="${conf.lastDataRefresh.year}"
+                          month="${conf.lastDataRefresh.month}"
+                          day="${conf.lastDataRefresh.day}"
+                          hour="${conf.lastDataRefresh.hour}"
+                          minute="${conf.lastDataRefresh.min}"
+                          second="${conf.lastDataRefresh.sec}" />
+          <fl:start segment="Init View" label="Use saved and signed PDF" />
+        </logic>
+      </step>
+    </steps>
+  </standardFlow>
+  <standardFlow id="Custom Data">
+    <events>
+      <defaultEvent step="Start" />
+    </events>
+    <steps>
+      <step id="Start" name="Start">
+        <logic>
+          <dt:setDateTime var="lastDataRefresh" />
+          <cv:setMap var="lastDataRefreshMap" hideFromDataTab="true">
+            <cv:addMapEntry key="year" value="${lastDataRefresh.year}" />
+            <cv:addMapEntry key="month" value="${lastDataRefresh.monthOfYear}" />
+            <cv:addMapEntry key="day" value="${lastDataRefresh.dayOfMonth}" />
+            <cv:addMapEntry key="hour" value="${lastDataRefresh.hourOfDay}" />
+            <cv:addMapEntry key="min" value="${lastDataRefresh.minuteOfHour}" />
+            <cv:addMapEntry key="sec" value="${lastDataRefresh.secondOfMinute}" />
+          </cv:setMap>
+          <cv:addMapEntry map="${conf}" key="lastDataRefresh" value="${lastDataRefreshMap}" />
+          <fl:next step="Load Salesforce data" />
+        </logic>
+      </step>
+      <step id="Load Salesforce data" name="Load Salesforce data" message="Loading Data">
+        <logic>
+          <sff:record id="mainRecord"
+                      var="opp"
+                      type="Opportunity"
+                      recordID="${id}"
+                      fields="Id"
+                      mainRecord="true" />
+          <!-- Language -->
+          <cv:set var="documentLanguage" value="en" />
+          <cv:setTranslation language="${documentLanguage}" var="labels" />
+          <dt:setDateTime var="testTime" />
+          <fl:next step="Load clauses" />
+        </logic>
+      </step>
+      <step id="Load clauses" name="Load clauses">
+        <logic>
+          <!-- Clauses -->
+          <soql:query var="dynamoClausesQuery" select="SELECT Id, Name, dynamo__Clause_Text__c, dynamo__Title__c, dynamo__Category__c, dynamo__Index__c, dynamo__Clause_Language__c FROM dynamo__Clause__c WHERE Name IN (&apos;&apos;) AND dynamo__Clause_Language__c = &apos;${documentLanguage}&apos;" />
+          <cv:setMap var="dynamoClausesMap" hideFromDataTab="true" />
+          <cl:forEach var="i" value="${dynamoClausesQuery}">
+            <cv:addMapEntry key="${i.Name}" value="${i.dynamo__Clause_Text__c}" map="${dynamoClausesMap}" />
+          </cl:forEach>
+          <fl:next step="Editor settings" />
+        </logic>
+      </step>
+      <step id="Editor settings" name="Editor settings">
+        <logic>
+          <!-- Define editor toolbar -->
+          <cv:setMap var="editorSettings" hideFromDataTab="true">
+            <cv:addMapEntry key="contenteditable-editor" value="table" />
+            <cv:addMapEntry key="contenteditable-nativespellcheck" value="true" />
+            <cv:addMapEntry key="contenteditable-toolbarcolor" value="#FFFFFF" />
+            <cv:addMapEntry key="contenteditable-filterpaste" value="true" />
+            <cv:addMapEntry key="contenteditable-toolbarcontainer" value="editable-toolbarContainer" />
+          </cv:setMap>
+          <!-- Use internal comments (chatter feed) pane at left -->
+          <cv:set var="useCommentPane" value="false" />
+          <!-- Show  clause pane  at right -->
+          <cv:set var="useClausePane" value="true" />
+          <fl:next step="Set document name" />
+        </logic>
+      </step>
+      <step id="Set document name" name="Set document name">
+        <logic>
+          <cv:set var="documentTemplateName" value="Document" />
+          <cc:choose>
+            <!-- New document -->
+            <cc:when test="${param.eventID == &apos;new&apos;}">
+              <!-- Define document name here -->
+              <cv:set var="dynDocName" value="Sample Document" />
+              <sfcrud:update type="dynamo__Dynamo_Document__c">
+                <sfcrud:field name="Id" value="${dynDocId}" />
+                <sfcrud:field name="Name" value="${dynDocName}" />
+              </sfcrud:update>
+            </cc:when>
+            <!-- Open existing document -->
+            <cc:otherwise>
+              <!-- If document name needs to be updated on every open -->
+            </cc:otherwise>
+          </cc:choose>
+          <fl:next step="Is internal approval needed" />
+        </logic>
+      </step>
+      <step id="Is internal approval needed" name="Is internal approval needed">
+        <logic>
+          <!-- Internal approval criteria -->
+          <!-- TODO: check need for internal approval -->
+          <cv:set var="approvalRequired" value="false" />
+          <cc:if test="${approvalRequired == true}">
+            <!-- If approver is known (user id) -->
+            <cv:set var="approverId" />
+            <!-- List of approvers -->
+            <soql:query var="approvers" select="SELECT Id, Name FROM User where isActive = true limit 20" hideFromDataTab="true" />
+          </cc:if>
+          <fl:next step="Next" />
+        </logic>
+      </step>
+      <step id="Set share configuration" name="Set share configuration">
+        <logic>
+          <!-- Disable share config UI -->
+          <cv:set var="disableShareConfigUI" value="false" />
+          <cc:choose>
+            <cc:when test="${not empty conf.shareType}">
+              <fl:next label="Already defined" step="Next" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next label="New" step="New share configuration" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="New share configuration" name="New share configuration" message="Loading Data">
+        <logic>
+          <!-- Share type -->
+          <cv:addMapEntry key="shareType" value="sign" screenData="" map="${conf}" />
+          <!-- End URL -->
+          <cv:addMapEntry key="endURL" value="https://www.documill.com/dynamo/" screenData="" map="${conf}" />
+          <!-- Validity in days -->
+          <cv:addMapEntry key="publicationValidDays" value="15" screenData="" map="${conf}" />
+          <!-- Sender -->
+          <cv:setMap var="sender">
+            <cv:addMapEntry value="${UserInfo.userId}" key="userId" />
+            <cv:addMapEntry value="${UserInfo.fullName}" key="fullName" />
+            <cv:addMapEntry value="${UserInfo.email}" key="email" />
+          </cv:setMap>
+          <cv:addMapEntry key="sender" value="${sender}" screenData="" map="${conf}" />
+          <!-- Record -->
+          <cv:setMap var="record">
+            <cv:addMapEntry key="id" value="${id}" />
+          </cv:setMap>
+          <cv:addMapEntry key="record" value="${record}" screenData="" map="${conf}" />
+          <!-- Primary contact -->
+          <cv:setMap var="primaryContact">
+            <cv:addMapEntry value="NA" key="contactId" />
+            <cv:addMapEntry value="${UserInfo.fullName}" key="fullName" />
+            <cv:addMapEntry value="${UserInfo.email}" key="email" />
+            <cv:addMapEntry value="${UserInfo.organizationName}" key="company" />
+          </cv:setMap>
+          <cv:addMapEntry key="primaryContact" map="${conf}" value="${primaryContact}" />
+          <!-- Signers -->
+          <cv:setCollection var="signers" />
+          <!-- Signer 1 -->
+          <cv:setMap var="signer">
+            <cv:addMapEntry value="${UserInfo.userId}" key="userId" />
+            <cv:addMapEntry value="${UserInfo.fullName}" key="fullName" />
+            <cv:addMapEntry value="${UserInfo.email}" key="email" />
+            <cv:addMapEntry value="${UserInfo.organizationName}" key="company" />
+          </cv:setMap>
+          <cv:addMapEntry value="${signer.fullName} (${signer.company})" key="label" map="${signer}" />
+          <cv:addItem value="${signer}" collection="${signers}" />
+          <cv:addMapEntry key="signers" map="${conf}" value="${signers}" />
+          <cv:set var="signers" />
+          <fl:next step="Next" />
+        </logic>
+      </step>
+      <step id="Next" name="Next">
+        <logic>
+          <!-- CUSTOMIZE: decide if options are shown. Now always false. -->
+          <cc:choose>
+            <cc:when test="${event == &apos;new&apos;}">
+              <cv:set var="documentOptions" value="false" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="documentOptions" value="false" />
+            </cc:otherwise>
+          </cc:choose>
+          <fl:start segment=":next" />
+        </logic>
+      </step>
+    </steps>
+  </standardFlow>
+  <standardFlow id="Questions">
+    <events>
+      <defaultEvent step="Start" />
+    </events>
+    <steps>
+      <step id="Start" name="Start">
+        <logic>
+          <cc:choose>
+            <cc:when test="${documentOptions}">
+              <fl:next step="Options" label="Choose options" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next step="Default options" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <screenStep id="Options" name="Options" screen="Main/OptionsScreen.html" />
+      <step id="Default options" name="Default options">
+        <logic>
+          <fl:next step="Options selected" />
+        </logic>
+      </step>
+      <step id="Options selected" name="Options selected">
+        <logic>
+          <fl:start segment="Init View" />
+        </logic>
+      </step>
+      <step id="Exit" name="Exit">
+        <logic>
+          <cv:set var="flowStatus" value="exit" />
+          <fl:start segment="End" />
+        </logic>
+      </step>
+    </steps>
+  </standardFlow>
+  <standardFlow id="Init View">
+    <events>
+      <defaultEvent step="Document status" />
+    </events>
+    <steps>
+      <step id="Document status" name="Document status">
+        <logic>
+          <!-- Default view -->
+          <cv:set var="viewMode" value="comment" />
+          <!-- Buttons -->
+          <cv:set var="buttonRequestApproval" value="false" hideFromDataTab="true" />
+          <cv:set var="buttonApprove" value="false" hideFromDataTab="true" />
+          <cv:set var="buttonReject" value="false" hideFromDataTab="true" />
+          <cv:set var="buttonPublish" value="false" hideFromDataTab="true" />
+          <cv:set var="buttonEdit" value="false" hideFromDataTab="true" />
+          <cv:set var="buttonDraft" value="false" hideFromDataTab="true" />
+          <cv:set var="buttonRefresh" value="false" hideFromDataTab="true" />
+          <cv:set var="buttonDocumentDisabled" value="false" hideFromDataTab="true" />
+          <cc:choose>
+            <cc:when test="${dynDocStatus == &apos;Draft&apos;}">
+              <fl:next label="Draft" step="Draft" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;In Review&apos;}">
+              <fl:next label="In Review" step="In Review" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;Approved&apos;}">
+              <fl:next label="Approved" step="Approved" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;Rejected&apos;}">
+              <fl:next label="Rejected" step="Rejected" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;Sent&apos;}">
+              <fl:next label="Sent" step="Sent" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;Waiting Signature&apos;}">
+              <fl:next label="Waiting signature" step="Waiting Signature" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;Signed&apos;}">
+              <fl:next label="Signed" step="Signed" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;External Review&apos;}">
+              <fl:next step="External Review" label="External Review" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;External Approved&apos;}">
+              <fl:next step="External Approved" label="External Approved" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;External Rejected&apos;}">
+              <fl:next step="External Rejected" label="External Rejected" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;External New Version Request&apos;}">
+              <fl:next step="External New Version Request" label="External New Version Request" />
+            </cc:when>
+            <cc:when test="${dynDocStatus == &apos;Error&apos;}">
+              <fl:next step="Error" label="Error status" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="errorMessageCustom" value="Invalid status: ${dynDocStatus}" />
+              <fl:start segment="Error" label="Invalid status" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Draft" name="Draft">
+        <logic>
+          <cc:if test="${dynDoc.dynamo__Locked__c == false}">
+            <cv:set var="buttonEdit" value="true" />
+          </cc:if>
+          <cc:choose>
+            <cc:when test="${approvalRequired}">
+              <cv:set var="buttonRequestApproval" value="true" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="buttonPublish" value="true" />
+            </cc:otherwise>
+          </cc:choose>
+          <cv:set var="buttonRefresh" value="false" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="In Review" name="In Review">
+        <logic>
+          <cc:if test="${approverId == UserInfo.userId}">
+            <cv:set var="buttonReject" value="true" />
+            <cv:set var="buttonApprove" value="true" />
+            <cc:if test="${dynDoc.dynamo__Locked__c == false}">
+              <cv:set var="buttonEdit" value="true" />
+            </cc:if>
+          </cc:if>
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="External Review" name="External Review">
+        <logic>
+          <cv:set var="externalFeedViewOnly" value="${true}" />
+          <cv:set var="useCommentsPane" value="true" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="Approved" name="Approved">
+        <logic>
+          <cv:set var="buttonDraft" value="true" />
+          <cv:set var="buttonPublish" value="true" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="External Approved" name="External Approved">
+        <logic>
+          <cv:set var="viewMode" value="preview" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="Rejected" name="Rejected">
+        <logic>
+          <cv:set var="buttonDraft" value="true" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="External Rejected" name="External Rejected">
+        <logic>
+          <cv:set var="buttonDraft" value="true" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="External New Version Request" name="External New Version Request">
+        <logic>
+          <cv:set var="useCommentsPane" value="true" />
+          <cv:set var="buttonEdit" value="true" />
+          <cv:set var="buttonPublish" value="true" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="Sent" name="Sent">
+        <logic>
+          <cv:set var="viewMode" value="preview" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="Waiting Signature" name="Waiting Signature">
+        <logic>
+          <cv:set var="viewMode" value="activity" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="Signed" name="Signed">
+        <logic>
+          <cv:set var="viewMode" value="preview" />
+          <cv:set var="buttonDocumentDisabled" value="true" hideFromDataTab="true" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="Error" name="Error">
+        <logic>
+          <cv:set var="viewMode" value="activity" />
+          <fl:next step="To view" />
+        </logic>
+      </step>
+      <step id="To view" name="To view">
+        <logic>
+          <fl:start segment="View" label="View" />
+        </logic>
+      </step>
+    </steps>
+  </standardFlow>
+  <standardFlow id="View">
+    <events>
+      <defaultEvent step="Start preview" />
+    </events>
+    <steps>
+      <step id="Start preview" name="Start preview" message=" ">
+        <logic>
+          <cc:choose>
+            <cc:when test="${viewMode == &apos;comment&apos;}">
+              <cc:choose>
+                <cc:when test="${useCommentPane == true}">
+                  <cv:set var="showInternalComments" value="true" />
+                </cc:when>
+                <cc:otherwise>
+                  <cv:set var="showInternalComments" value="false" />
+                </cc:otherwise>
+              </cc:choose>
+              <cv:set var="showExternalComments" value="true" />
+              <cv:set var="showPDF" value="false" hideFromDataTab="true" />
+              <cc:choose>
+                <cc:when test="${not empty composedDoc}">
+                  <cv:set var="viewDoc" value="${composedDoc}" hideFromDataTab="true" />
+                  <fl:next step="Comments pane" label="Cached doc HTML" />
+                </cc:when>
+                <cc:otherwise>
+                  <cv:set var="noSave" value="true" />
+                  <fl:next step="Update" label="Compose doc HTML" />
+                </cc:otherwise>
+              </cc:choose>
+            </cc:when>
+            <cc:when test="${viewMode == &apos;activity&apos;}">
+              <cv:set var="showPDF" value="false" />
+              <cv:set var="showInternalComments" value="false" />
+              <cv:set var="showExternalComments" value="false" />
+              <fl:next step="Compose status report" label="Activity report" />
+            </cc:when>
+            <cc:when test="${viewMode == &apos;preview&apos;}">
+              <cv:set var="showPDF" value="true" />
+              <cc:choose>
+                <cc:when test="${not empty fullPDF}">
+                  <fl:next label="Preview" step="Preview" />
+                </cc:when>
+                <cc:otherwise>
+                  <cv:set var="noSave" value="true" />
+                  <fl:next label="Compose PDF" step="Update" />
+                </cc:otherwise>
+              </cc:choose>
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="errorMessageCustom" value="Invalid viewMode: ${viewMode}" />
+              <fl:start segment="Error" label="Invalid view mode" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Compose status report" name="Compose status report">
+        <logic>
+          <fl:setMessage message="Generating report" />
+          <fo:setDateTimeFormat name="HHmm" pattern="HH:mm" />
+          <fo:setDateTimeFormat name="ddMMyy" pattern="dd.MM.yy" />
+          <cv:set var="prevStatus" value="${dynDocStatus}" />
+          <soql:query var="q" select="SELECT dynamo__Document_Status__c FROM dynamo__Dynamo_Document__c where id=&apos;${dynDocId}&apos;" hideFromDataTab="true" />
+          <cc:choose>
+            <cc:when test="${q.dynamo__Document_Status__c == prevStatus}">
+              <sff:relatedList var="allActivity"
+                               type="dynamo__Dynamo_Document_Event__c"
+                               parentID="${dynDocId}"
+                               parentType="dynamo__Dynamo_Document__c"
+                               orderBy="CreatedDate desc"
+                               fields="CreatedDate, dynamo__Message__c, dynamo__Type__c"
+                               data-tag-uuid="ed0e8189-ae03-411a-b29f-b62518996575" />
+              <fl:composeContent var="viewDoc" editable="false" automaticElementIDs="false" hideFromDataTab="true" template="${doc[&quot;Status Report&quot;]}" />
+              <fl:next step="Preview" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:setMessage message="Status has changed to ${q.dynamo__Document_Status__c} - Refreshing data" />
+              <cv:addMapEntry key="eventID" value="open" map="${param}" />
+              <fl:start label="Restart" segment=":first" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <flowStep id="Update"
+                name="Update"
+                sequenceID="Update"
+                sequenceSrc=""
+                nextStep="Comments pane"
+                step="Comments pane">
+        <initialization />
+      </flowStep>
+      <step id="Comments pane" name="Comments pane">
+        <logic>
+          <cv:set var="viewDoc" value="${composedDoc}" />
+          <cc:choose>
+            <cc:when test="${useCommentsPane}">
+              <fl:next step="Query external comments" />
+            </cc:when>
+            <cc:otherwise>
+              <cv:set var="externalFeed" value="${&apos;&apos;}" />
+              <fl:next step="Preview" label="Show preview" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Query external comments" name="Query external comments">
+        <logic>
+          <cv:set var="externalFeed" value="${&apos;&apos;}" hideFromDataTab="true" />
+          <cc:if test="${dynDocStatus == &apos;External Review&apos; or dynDocStatus == &apos;External New Version Request&apos;}">
+            <soql:query var="externalFeed" select="SELECT Id, CreatedDate, dynamo__Message__c FROM dynamo__Dynamo_Document_Event__c WHERE dynamo__Dynamo_Document__c =&apos;${dynDoc.Id}&apos; AND dynamo__Type__c = &apos;Comment&apos; order by CreatedDate desc" hideFromDataTab="true" />
+            <soql:query var="externalReplyFeed" select="SELECT Id, CreatedDate, dynamo__Message__c, dynamo__Type__c, dynamo__Parent_Event__c FROM dynamo__Dynamo_Document_Event__c WHERE dynamo__Dynamo_Document__c =&apos;${dynDoc.Id}&apos; AND dynamo__Type__c = &apos;Reply&apos; order by CreatedDate desc" hideFromDataTab="true" />
+            <cc:choose>
+              <cc:when test="${dynDocStatus == &apos;External Review&apos;}">
+                <cv:set var="externalFeedViewOnly" value="${true}" />
+              </cc:when>
+              <cc:otherwise>
+                <cv:set var="externalFeedViewOnly" value="${false}" />
+              </cc:otherwise>
+            </cc:choose>
+            <cv:setMap var="externalFeedFields" hideFromDataTab="true">
+              <cv:addMapEntry key="dynamo__Dynamo_Document__c" value="${dynDoc.Id}" />
+              <cv:addMapEntry key="dynamo__Type__c" value="Comment" />
+            </cv:setMap>
+            <cv:setMap var="externalReplyFeedFields" hideFromDataTab="true">
+              <cv:addMapEntry key="dynamo__Dynamo_Document__c" value="${dynDoc.Id}" />
+              <cv:addMapEntry key="dynamo__Type__c" value="Reply" />
+            </cv:setMap>
+          </cc:if>
+          <fl:next step="Preview" />
+        </logic>
+      </step>
+      <screenStep id="Preview" name="Preview" screen="Main/PreviewScreen.html" />
+      <step id="Handle buttons" name="Handle buttons">
+        <logic>
+          <cc:choose>
+            <cc:when test="${param.button == &apos;exit&apos;}">
+              <cv:set var="flowStatus" value="exit" />
+              <fl:start segment="End" label="Exit" />
+            </cc:when>
+            <cc:when test="${param.button == &apos;edit&apos;}">
+              <fl:start segment="Edit" label="Edit" />
+            </cc:when>
+            <cc:when test="${param.button == &apos;requestApproval&apos;}">
+              <cv:set var="approvalAction" value="request" hideFromDataTab="true" />
+              <fl:next label="Request approval" step="Approval" />
+            </cc:when>
+            <cc:when test="${param.button == &apos;approve&apos;}">
+              <cv:set var="approvalAction" value="approve" />
+              <fl:next label="Approve" step="Approval" />
+            </cc:when>
+            <cc:when test="${param.button == &apos;reject&apos;}">
+              <cv:set var="approvalAction" value="reject" />
+              <fl:next label="Reject" step="Approval" />
+            </cc:when>
+            <cc:when test="${param.button == &apos;comment&apos;}">
+              <cv:set var="viewMode" value="comment" />
+              <fl:next step="Start preview" label="Comment" />
+            </cc:when>
+            <cc:when test="${param.button == &apos;activity&apos;}">
+              <cv:set var="viewMode" value="activity" />
+              <fl:next step="Start preview" label="Activity" />
+            </cc:when>
+            <cc:when test="${param.button == &apos;preview&apos;}">
+              <cv:set var="viewMode" value="preview" />
+              <fl:next step="Start preview" label="Preview" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next step="Preview" label="Otherwise" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Edit button handler" name="Edit button handler">
+        <logic>
+          <fl:start segment="Edit" step="Edit button handler" />
+        </logic>
+      </step>
+      <flowStep id="Share button handler"
+                name="Share button handler"
+                sequenceID="ShareLogic"
+                sequenceSrc=""
+                nextStep="After subflow"
+                step="After subflow">
+        <initialization />
+      </flowStep>
+      <step id="After subflow" name="After subflow">
+        <logic>
+          <cc:choose>
+            <cc:when test="${flowStatus == &apos;error&apos;}">
+              <fl:start segment="Error" label="Error" />
+            </cc:when>
+            <cc:when test="${flowStatus == &apos;cancel&apos;}">
+              <fl:next label="Cancel" step="Preview" />
+            </cc:when>
+            <cc:when test="${flowStatus == &apos;exit&apos;}">
+              <fl:start label="Exit" segment="End" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:start segment="Init View" label="OK" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <flowStep id="Approval"
+                name="Approval"
+                sequenceID="ApprovalLogic"
+                sequenceSrc=""
+                nextStep="After subflow"
+                step="After subflow">
+        <initialization />
+      </flowStep>
+      <step id="Disable share" name="Disable share">
+        <logic>
+          <sfpub:expirePublication publicationID="${conf.publications.lastPublicationId}" />
+          <cv:set var="dynDocStatus" value="Draft" />
+          <sfcrud:update type="dynamo__Dynamo_Document__c">
+            <sfcrud:field name="Id" value="${dynDocId}" />
+            <sfcrud:field name="dynamo__Document_Status__c" value="${dynDocStatus}" />
+            <sfcrud:field name="dynamo__Publication_URL__c" value="${&apos;&apos;}" />
+            <sfcrud:field name="dynamo__Publication_Date__c" value="${&apos;&apos;}" />
+            <sfcrud:field name="dynamo__Publication_Expires__c" value="${&apos;&apos;}" />
+          </sfcrud:update>
+          <sfcrud:create type="dynamo__Dynamo_Document_Event__c" var="dview">
+            <sfcrud:field name="dynamo__Type__c" value="Other" />
+            <sfcrud:field name="dynamo__Dynamo_Document__c" value="${dynDocId}" />
+            <sfcrud:field name="dynamo__Message__c" value="Sharing disabled: ${publishURL}" />
+          </sfcrud:create>
+          <cv:set var="publishURL" value="${&apos;&apos;}" />
+        </logic>
+      </step>
+      <step id="To draft" name="To draft">
+        <logic>
+          <cv:set var="dynDocStatus" value="Draft" />
+          <cv:set var="approverId" value="" />
+          <cv:set var="publishURL" value="" />
+          <sfcrud:update type="dynamo__Dynamo_Document__c">
+            <sfcrud:field name="Id" value="${dynDocId}" />
+            <sfcrud:field name="dynamo__Document_Status__c" value="${dynDocStatus}" />
+            <sfcrud:field name="dynamo__Next_User__c" value="${&apos;&apos;}" />
+          </sfcrud:update>
+          <fl:start segment="Load Files" label="Reload" />
+        </logic>
+      </step>
+      <step id="Refresh data" name="Refresh data">
+        <logic>
+          <fl:start segment="Custom Data" label="Refresh" />
+        </logic>
+      </step>
+    </steps>
+  </standardFlow>
+  <standardFlow id="Edit">
+    <events>
+      <defaultEvent step="Start edit" />
+    </events>
+    <steps>
+      <step id="Start edit" name="Start edit">
+        <logic>
+          <soql:query var="statusQuery" select="SELECT Id, dynamo__Locked__c, dynamo__Last_Editor__r.Name FROM dynamo__Dynamo_Document__c where Id = &apos;${dynDocId}&apos;" hideFromDataTab="true" />
+          <cc:choose>
+            <cc:when test="${statusQuery.dynamo__Locked__c}">
+              <fl:next label="Locked" step="Document in use" />
+            </cc:when>
+            <cc:otherwise>
+              <sfcrud:update type="dynamo__Dynamo_Document__c">
+                <sfcrud:field name="Id" value="${dynDocId}" />
+                <sfcrud:field name="dynamo__Locked__c" value="${true}" />
+                <sfcrud:field name="dynamo__Last_Editor__c" value="${UserInfo.getUserId()}" />
+              </sfcrud:update>
+            </cc:otherwise>
+          </cc:choose>
+          <fl:next step="Compose for edit" label="Basic editor" />
+        </logic>
+      </step>
+      <step id="Compose for edit" name="Compose for edit">
+        <logic>
+          <fl:composeContent template="${doc[documentTemplateName]}" var="composedDocEdit" hideFromDataTab="true" editable="true" automaticElementIDs="false" />
+          <!-- TODO headings -->
+          <fl:next step="Editor" />
+        </logic>
+      </step>
+      <screenStep id="Editor" name="Editor" screen="Main/EditorScreen.html" onTimeout="Timeout" />
+      <step id="Cancel" name="Cancel" message="Closing">
+        <logic>
+          <sfcrud:update type="dynamo__Dynamo_Document__c">
+            <sfcrud:field name="Id" value="${dynDocId}" />
+            <sfcrud:field name="dynamo__Locked__c" value="${false}" />
+          </sfcrud:update>
+          <cv:set var="flowStatus" value="cancel" />
+          <fl:start segment="View" />
+        </logic>
+      </step>
+      <step id="Timeout" name="Timeout">
+        <logic>
+          <cv:set var="fullPDF" value="${&apos;&apos;}" />
+          <cv:set var="timeout" value="true" />
+          <fl:next step="Update" />
+        </logic>
+      </step>
+      <screenStep id="Document in use" name="Document in use" screen="Main/Document in useScreen.html" />
+      <flowStep id="Update"
+                name="Update"
+                sequenceID="Update"
+                sequenceSrc=""
+                nextStep="After update"
+                step="After compose">
+        <initialization />
+      </flowStep>
+      <step id="After update" name="After update">
+        <logic>
+          <cv:set var="composedDocEdit" value="" />
+          <cc:choose>
+            <cc:when test="${timeout}">
+              <fl:start segment="End" label="Timeout" />
+            </cc:when>
+            <cc:when test="${flowStatus == &apos;ok&apos;}">
+              <fl:next label="OK" step="OK" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next label="Error" step="Error" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Error" name="Error">
+        <logic>
+          <cv:set var="flowStatus" value="error" />
+          <fl:start segment="Error" />
+        </logic>
+      </step>
+      <step id="OK" name="OK">
+        <logic>
+          <cv:set var="flowStatus" value="ok" />
+          <fl:start segment="Init View" label="Preview" />
+        </logic>
+      </step>
+    </steps>
+  </standardFlow>
+  <standardFlow id="End">
+    <events>
+      <defaultEvent step="End of workflow" />
+    </events>
+    <steps>
+      <step id="End of workflow" name="End of workflow">
+        <logic>
+          <cc:choose>
+            <cc:when test="${dynDocStatus == &apos;Signed&apos;}">
+              <fl:next label="Do cleanup" step="Remove temp files" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next step="Finnish" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="Remove temp files" name="Remove temp files">
+        <logic>
+          <!-- Removes temp HTML files, PDF under Dynamo Document and signature images -->
+          <cv:set var="update" value="${false}" hideFromDataTab="true" />
+          <cc:if test="${not empty conf.fileHTML}">
+            <sfcrud:delete value="${conf.fileHTML}" />
+            <cv:setProperty target="${conf.fileHTML}" value="${&apos;&apos;}" />
+            <cv:set var="update" value="${true}" />
+            <cl:forEach value="${conf.signers}" var="i">
+              <sfcrud:delete value="${i.imageFileId}" />
+              <cv:setProperty target="${i.imageFileId}" value="${&apos;&apos;}" />
+            </cl:forEach>
+          </cc:if>
+          <cc:if test="${not empty conf.filePDFXXXXX}">
+            <sfcrud:delete value="${conf.filePDF}" />
+            <cv:setProperty target="${conf.filePDF}" value="${&apos;&apos;}" />
+            <cv:set var="update" value="${true}" />
+          </cc:if>
+          <cc:if test="${update}">
+            <cv:toJSON value="${conf}" var="confJSON" />
+            <sfcrud:update type="dynamo__Dynamo_Document__c">
+              <sfcrud:field name="Id" value="${dynDocId}" />
+              <sfcrud:field name="dynamo__Configuration_JSON__c" value="${confJSON}" />
+            </sfcrud:update>
+          </cc:if>
+          <fl:next step="Finnish" />
+        </logic>
+      </step>
+      <step id="Finnish" name="Finnish">
+        <logic>
+          <fl:finish />
+        </logic>
+      </step>
+    </steps>
+  </standardFlow>
+  <standardFlow id="Error">
+    <events>
+      <defaultEvent step="Show error message" />
+    </events>
+    <steps>
+      <screenStep id="Show error message" name="Show error message" screen="Main/Show error messageScreen.html" />
+      <step id="Exit" name="Exit">
+        <logic>
+          <fl:finish />
+        </logic>
+      </step>
+    </steps>
+  </standardFlow>
+</flowSequence>

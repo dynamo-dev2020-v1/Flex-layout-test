@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://dynamo.documill.com/schemas/HTMLScreen" id="Main/Collect signatureScreen.html" name="Main/Collect signatureScreen.html">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="dynamo-type" content="form" />
+  <link rel="stylesheet" type="dynamo/css" href="Main/style.css" />
+</head>
+
+<body>
+  <div class="screen slds modal" aria-hidden="false" role="dialog">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <h2 class="slds-text-heading--medium">Type Your Signature</h2>
+      </div>
+      <div class="slds-modal__content slds-p-around--medium">
+        <div class="group">
+          <div class="slds-form-element input-block">
+            <label class="slds-form-element__label">Signature</label>
+            <div class="slds-form-element__control">
+              <input name="signatureName" class="slds-input" type="text" placeholder="signature here" dyn-value="nextSigner.Name"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slds-modal__footer button-group">
+        <button class="slds-button slds-button--neutral" dyn-next="Cancel" type="submit" name="cancel">Cancel</button>
+        <button class="slds-button slds-button--neutral slds-button--brand" dyn-next="Store Signature" type="submit" name="ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

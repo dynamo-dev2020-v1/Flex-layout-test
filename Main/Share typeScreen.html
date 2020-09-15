@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://dynamo.documill.com/schemas/HTMLScreen" id="Main/Share typeScreen.html" name="Main/Share typeScreen.html">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="dynamo-type" content="form" />
+  <link rel="stylesheet" type="dynamo/css" href="Main/style.css" />
+</head>
+
+<body>
+  <div class="screen slds modal" aria-hidden="false" role="dialog">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <h2 class="slds-text-heading--medium">Share Type</h2>
+      </div>
+      <div class="slds-modal__content slds-p-around--medium">
+        <div class="group">
+          <fieldset class="radio-group slds-form-element">
+            <legend class="slds-form-element__label slds-form-element__label--top">Options</legend>
+            <div class="slds-form-element__control">
+              <label class="slds-radio form-inline">
+        <input type="radio" name="shareType" value="1" dyn-checked="shareType == 1" />
+        <span class="slds-radio--faux"></span>
+        <span class="slds-form-element__label">Commenting + Approval</span>
+      </label>
+              <!--
+              <label class="slds-radio form-inline">
+        <input type="radio" name="shareType" value="2" dyn-checked="shareType == 2" />
+        <span class="slds-radio--faux"></span>
+        <span class="slds-form-element__label">Signing</span>
+      </label>
+-->
+              <label class="slds-radio form-inline">
+      <input name="shareType" type="radio" value="3" dyn-checked="shareType == 3" />
+      <span class="slds-radio--faux"></span>
+      <span class="slds-form-element__label">Commenting + Approval + Signing</span>
+    </label></div>
+          </fieldset>
+        </div>
+      </div>
+      <div class="slds-modal__footer button-group">
+        <button class="slds-button slds-button--neutral" dyn-next="Return" name="Cancel" type="submit">Cancel</button>
+        <button class="slds-button slds-button--neutral slds-button--brand" dyn-next="Set share type" type="submit" name="ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

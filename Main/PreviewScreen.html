@@ -1,0 +1,79 @@
+<html xmlns="http://www.w3.org/1999/xhtml" id="Main/New PreviewScreen.html" name="Main/New PreviewScreen.html">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="form" name="dynamo-type" />
+  <link rel="stylesheet" type="dynamo/css" href="Main/style.css" />
+  <link rel="stylesheet" type="dynamo/css" href="Styles/style.css" />
+</head>
+
+<body>
+
+  <div id="screen-container" class="screen slds">
+
+    <div id="screen-header" class="group">
+
+      <div id="screen-header-left">
+        <span style="font-size: 1.5em" dyn-content="fileName">[Dynamo Document Name]</span>
+        <span dyn-if="not empty versionNumberSaved" class="slds-badge" dyn-content="${&#039;ver &#039;}${versionNumberSaved}">[version]</span>
+        <span dyn-if="not empty saveTime">&#160;|&#160;</span><span dyn-if="not empty saveMessage" dyn-content="saveMessage">[message]</span>&#160;<span dyn-content="saveTime" dyn-if="not empty saveTime" dyn-content-format="&#039;justTime&#039;">[dateTime]</span>
+      </div>
+      <div id="screen-header-center">
+        <div class="slds-button-group">
+
+          <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="comment" dyn-disabled="viewMode == &#039;comment&#039; or buttonDocumentDisabled" dyn-next-message="Starting view">Document</button>
+
+          <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="preview" dyn-disabled="viewMode == &#039;preview&#039;" dyn-next-message="Starting PDF preview">PDF preview</button><button type="submit"
+            dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="activity" dyn-disabled="viewMode == &#039;activity&#039;" dyn-next-message="Generating activity report">Status Report</button>
+
+
+          <button id="editButton" type="submit" dyn-next="Edit button handler" class="form-inline slds-button slds-button--neutral" name="edit" dyn-next-message="Starting editor" dyn-disabled="buttonEdit == false">Edit</button>
+
+        </div>
+
+      </div>
+      <div id="screen-header-right" class="button-group">
+
+
+        <button type="submit" dyn-next="Share button handler" class="form-inline slds-button slds-button--neutral" dyn-next-message="Preparing to share" dyn-disabled="buttonPublish == false" name="share">Share</button>
+
+        <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="approve" dyn-if="buttonApprove" dyn-next-message="Approving">Approve</button>
+
+        <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="reject" dyn-if="buttonReject" dyn-next-message="Rejecting">Reject</button>
+
+        <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="requestApproval" dyn-if="buttonRequestApproval" dyn-next-message="Preparing">Request Approval</button>
+
+        <span id="screen-header-dyndocstatus" style="font-size: 1.1em; margin-left: 10px; margin-right: 10px;" dyn-if="not empty dynDocStatus" dyn-content="dynDocStatus">[dynDocStatus]</span>
+
+        <button type="submit" dyn-next="To draft" class="form-inline slds-button slds-button--neutral" name="draft" dyn-if="buttonDraft" dyn-next-message="Refreshing data">Change to draft</button><button type="submit" dyn-next="Refresh data" class="form-inline slds-button slds-button--neutral"
+          name="refresh" dyn-if="buttonRefresh" dyn-next-message="Refreshing data">Refresh</button><button style="color: firebrick" type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="exit" dyn-next-message="Returning to Record">Exit</button>
+
+      </div>
+    </div>
+
+    <div dyn-if="showPDF" id="screen-content">
+      <dyn-pdf-viewer source="${fullPDF}">PDF Content</dyn-pdf-viewer>
+    </div>
+
+
+    <div dyn-if="not showPDF" id="screen-content">
+      <div id="screen-content-left" class="group" dyn-if="showInternalComments">
+        <dyn-sfdc-chatter-doclinker record-id="dynDocId" mention-options="mentionOptions" starting-post-id="postID" />
+      </div>
+      <div id="screen-content-center">
+        <div id="editable-toolbarContainer"></div>
+        <div class="group" id="screen-document-notoolbar" dyn-content="viewDoc">HTML content</div>
+      </div>
+      <div id="screen-content-right" dyn-if="showExternalComments and not empty externalFeed" class="group">
+        <dyn-sfdc-feed-doclinker view-only="externalFeedViewOnly" feed-source="externalFeed" object-type="&#039;dynamo__Dynamo_Document_Event__c&#039;" content-field="&#039;dynamo__Message__c&#039;" fields-set-on-create="externalFeedFields" comment-source="externalReplyFeed"
+          comment-object-type="&#039;dynamo__Dynamo_Document_Event__c&#039;" comment-content-field="&#039;dynamo__Message__c&#039;" comment-fields-set-on-create="externalReplyFeedFields" comment-link-field="&#039;dynamo__Parent_Event__c&#039;" />
+      </div>
+    </div>
+
+
+  </div>
+
+
+</body>
+
+</html>

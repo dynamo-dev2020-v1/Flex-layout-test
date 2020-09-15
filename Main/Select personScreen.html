@@ -1,0 +1,39 @@
+<!DOCTYPE html><html xmlns="http://dynamo.documill.com/schemas/HTMLScreen" id="Main/Select personScreen.html" name="Main/Select personScreen.html"><head>
+  <meta charset="utf-8" />
+  <meta name="dynamo-type" content="form" />
+  <link rel="stylesheet" type="dynamo/css" href="Main/style.css" />
+</head>
+
+<body>
+  <div class="screen slds modal" aria-hidden="false" role="dialog">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <h2 class="slds-text-heading--medium">Please select approver</h2>
+      </div>
+      <div class="slds-modal__content slds-p-around--medium">
+        <div class="group">
+
+          <fieldset class="radio-group slds-form-element">
+            <legend class="slds-form-element__label slds-form-element__label--top">Approver</legend>
+            <div class="slds-form-element__control" dyn-repeat="approvers" dyn-repeat-var="i">
+              <label class="slds-radio form-inline">
+                    <input type="radio" name="approverId" dyn-value="i.Id" />
+                    <span class="slds-radio--faux">
+                    </span>
+                    <span class="slds-form-element__label" dyn-content="i.Name">[name]</span>
+                  </label>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+      <div class="slds-modal__footer button-group">
+        <button class="slds-button slds-button--neutral" dyn-next="Cancel" type="submit" name="cancel" dyn-submit="false">Cancel</button>
+        <button class="slds-button slds-button--neutral slds-button--brand" dyn-next="Send for approval" type="submit" name="select">Select</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</body></html>

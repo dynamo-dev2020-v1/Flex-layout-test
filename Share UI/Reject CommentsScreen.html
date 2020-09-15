@@ -1,0 +1,30 @@
+<!DOCTYPE html><html xmlns="http://dynamo.documill.com/schemas/HTMLScreen" id="Reject CommentsScreen.html" name="Reject CommentsScreen.html"><head>
+	  <meta charset="utf-8" />
+	  <meta name="dynamo-type" content="form" />
+    <link rel="stylesheet" type="dynamo/css" href="style.css" />
+  </head>
+	<body>
+    <div class="screen slds modal" aria-hidden="false" role="dialog">
+      <div class="slds-modal__container">
+        <div class="slds-modal__header">
+          <h2 class="slds-text-heading--medium">Rejecting Offer</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around--medium">
+          <div class="group">
+            <p>Please tell why you want to reject this offer</p>
+            <div class="slds-form-element textarea-block">
+              <label class="slds-form-element__label">Reason</label>
+              <div class="slds-form-element__control">
+                <textarea class="slds-textarea" placeholder="Reason" name="rejectReason"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slds-modal__footer button-group">
+          <button class="slds-button slds-button--neutral" dyn-next="Cancel" name="Cancel" type="submit" dyn-next-message="Cancel">Cancel</button>
+          <button class="slds-button slds-button--neutral slds-button--brand" dyn-next="Reject" type="submit" dyn-next-message="Sending reject message" name="ok">OK</button>
+        </div>
+      </div>
+    </div>
+  
+</body></html>

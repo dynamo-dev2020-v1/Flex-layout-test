@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://dynamo.documill.com/schemas/HTMLScreen" id="Main/ActivityScreen.html" name="Comment view-1Screen">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="dynamo-type" content="form" />
+  <link rel="stylesheet" type="dynamo/css" href="Main/style.css" />
+  <link rel="stylesheet" type="dynamo/css" href="Styles/style.css" />
+</head>
+
+<body>
+  <div id="screen-container" class="screen slds">
+    <div id="screen-header" class="group">
+
+      <div id="screen-header-left">
+        <span style="font-size: 1.5em" dyn-content="fileName">[Dynamo Document Name]</span>
+        <span dyn-if="not empty versionNumberSaved">&#160; version </span><span dyn-if="not empty versionNumberSaved" dyn-content="versionNumberSaved">[version]</span>
+        <span dyn-if="not empty saveTime">&#160;|&#160;saved </span><span dyn-content="saveTime" dyn-if="not empty saveTime" dyn-content-format="&#039;justTime&#039;">[dateTime]</span>
+      </div>
+      <div id="screen-header-center">
+        <div class="slds-button-group" role="group" style="text-align: right;">
+          <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" dyn-if="buttonEdit" dyn-next-message="Open Edit" name="edit">Edit</button><button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral"
+            name="comment" disabled="true">Comment</button><button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="preview" dyn-next-message="Open Preview">Preview</button>
+        </div>
+      </div>
+
+
+      <div id="screen-header-right" class="button-group">
+
+
+        <button class="form-inline slds-button slds-button--neutral" type="submit" dyn-next="Handle buttons" dyn-next-message="Request approval" name="requestApproval" dyn-if="buttonRequestApproval">Request Approval</button><button type="submit" dyn-next="Handle buttons"
+          class="form-inline slds-button slds-button--neutral" name="approve" dyn-next-message="Approving" dyn-if="buttonApprove">Approve</button><button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="reject"
+          dyn-next-message="Rejecting" dyn-if="buttonReject">Reject</button><button class="form-inline slds-button slds-button--neutral" dyn-if="buttonEmail" dyn-next="Handle buttons" dyn-next-message="Open Email" type="submit" name="email">Send Email</button>
+
+
+        <span style="font-size: 1.1em; margin-left: 10px; margin-right: 10px;" dyn-if="not empty dynDocStatus" dyn-content="dynDocStatus">[dynDocStatus]</span>
+
+        <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="esign" dyn-if="buttonEsign">E-sign</button><button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral"
+          name="refresh" dyn-next-message="Refreshing" dyn-if="buttonRefresh">Refresh</button>
+
+        <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" dyn-if="buttonPublish" name="publish" dyn-next-message="Preparing to share">Share</button>
+        <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="exit" dyn-next-message="Returning to Record" style="color: firebrick">Exit</button>
+
+      </div>
+    </div>
+    <div id="screen-content">
+      <div id="screen-content-left" class="group">
+        <dyn-sfdc-chatter-doclinker record-id="dynDocId" mention-options="mentionOptions" starting-post-id="postID" />
+      </div>
+      <div id="screen-content-center">
+        <div id="editable-toolbarContainer"></div>
+        <div class="group" id="screen-document-notoolbar" dyn-content="activityDoc">Activity document is missing!</div>
+      </div>
+      <div id="screen-content-right" dyn-if="not empty externalFeed" class="group">
+        <dyn-sfdc-feed-doclinker view-only="externalFeedViewOnly" feed-source="externalFeed" object-type="&#039;dynamo2__Dynamo_Document_Event__c&#039;" content-field="&#039;dynamo2__Message__c&#039;" fields-set-on-create="externalFeedFields" comment-source="externalReplyFeed"
+          comment-object-type="&#039;dynamo2__Dynamo_Document_Event__c&#039;" comment-content-field="&#039;dynamo2__Message__c&#039;" comment-fields-set-on-create="externalReplyFeedFields" comment-link-field="&#039;dynamo2__Parent_Event__c&#039;" />
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

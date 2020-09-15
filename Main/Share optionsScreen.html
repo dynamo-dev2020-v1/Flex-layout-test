@@ -1,0 +1,50 @@
+<!DOCTYPE html><html xmlns="http://dynamo.documill.com/schemas/HTMLScreen" id="Main/Share optionsScreen.html" name="Main/Share typeScreen.html"><head>
+	  <meta charset="utf-8" />
+	  <meta name="dynamo-type" content="form" />
+	<link rel="stylesheet" type="dynamo/css" href="Main/style.css" /></head>
+	<body>
+    <div class="screen slds modal" aria-hidden="false" role="dialog">
+      <div class="slds-modal__container">
+        <div class="slds-modal__header">
+          <h2 class="slds-text-heading--medium">Share Options</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around--medium">
+          <div class="group">
+            <p>How document should be shared?</p><div class="checkbox-group slds-form--stacked">
+    <fieldset class="slds-form-element">
+      <span class="slds-form-element__label slds-form-element__label--top">
+        <legend>Options</legend>
+      </span>
+      <div class="slds-form-element__control">
+        <label class="slds-checkbox form-inline">
+          <input type="checkbox" value="true" name="allowCommenting" dyn-checked="allowCommenting" />
+          <span class="slds-checkbox--faux"></span>
+          <span class="slds-form-element__label">Allow commenting</span>
+        </label>
+      <label class="slds-checkbox form-inline">
+      <input type="checkbox" name="requireApproval" value="true" dyn-checked="requireApproval" />
+      <span class="slds-checkbox--faux"></span>
+      <span class="slds-form-element__label">Require approval</span>
+    </label><label class="slds-checkbox form-inline">
+      <input type="checkbox" value="true" name="requireEsignature" dyn-checked="requireEsignature" />
+      <span class="slds-checkbox--faux"></span>
+      <span class="slds-form-element__label">Require E-signature</span>
+    </label></div>
+    </fieldset>
+  </div><div class="checkbox-group slds-form--stacked">
+    <fieldset class="slds-form-element">
+      
+      <div class="slds-form-element__control"></div>
+    </fieldset>
+  </div>
+          </div>
+        </div>
+        <div class="slds-modal__footer button-group">
+          <button class="slds-button slds-button--neutral" dyn-next="Return" name="Cancel" type="submit">Cancel</button>
+          <button class="slds-button slds-button--neutral slds-button--brand" dyn-next="Set share type" type="submit" name="ok">OK</button>
+        </div>
+      </div>
+    </div>
+	
+
+</body></html>

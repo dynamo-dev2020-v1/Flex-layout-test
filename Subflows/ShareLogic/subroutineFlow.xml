@@ -1,0 +1,123 @@
+
+<flowSequence xmlns="http://dynamo.documill.com/schemas/flow"
+              xmlns:fl="http://dynamo.documill.com/schemas/taglib/core/flow"
+              xmlns:cc="http://dynamo.documill.com/schemas/taglib/core/conditional"
+              xmlns:cv="http://dynamo.documill.com/schemas/taglib/core/var"
+              xmlns:sffile="http://dynamo.documill.com/schemas/taglib/salesforce/file"
+              id="ShareLogic"
+              name="Subroutine Flow">
+  <startFlow id="Start">
+    <events>
+      <defaultEvent step="Start subflow" />
+    </events>
+    <steps>
+      <step id="Start subflow" name="Start">
+        <logic>
+          <cc:choose>
+            <cc:when test="${not empty publishURL}">
+              <fl:next label="Re-share" step="Start share" />
+            </cc:when>
+            <cc:otherwise>
+              <cc:choose>
+                <cc:when test="${disableShareConfigUI}">
+                  <fl:next label="Re-share" step="Start share" />
+                </cc:when>
+                <cc:otherwise>
+                  <fl:next step="Common share options" label="First share" />
+                </cc:otherwise>
+              </cc:choose>
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <flowStep id="Common share options"
+                name="Common share options"
+                sequenceID="DefineShareOptions"
+                sequenceSrc="${dynamoCommonEngage}"
+                nextStep="Start share"
+                step="Start share">
+        <initialization />
+      </flowStep>
+      <step id="Start share" name="Start share">
+        <logic >
+          <cc:choose>
+            <cc:when test="${flowStatus == &apos;ok&apos;}">
+              <cv:getContent var="shareReSendLinkEmail" dap="${doc}" resource="Re-share/content.html" />
+              <cv:getContent var="shareSendLinkEmail" dap="${doc}" resource="Share/content.html" />
+              <cc:choose>
+                <cc:when test="${not empty saveTime}">
+                  <fl:next step="Common share now" label="OK" />
+                </cc:when>
+                <cc:otherwise>
+                  <fl:next step="Update" label="Compose all" />
+                </cc:otherwise>
+              </cc:choose>
+            </cc:when>
+            <cc:when test="${flowStatus == &apos;error&apos;}">
+              <fl:next label="Error" step="Error" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next label="Otherwise" step="Cancel" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <flowStep id="Update" name="Update" sequenceID="Update" sequenceSrc="" nextStep="After update">
+        <initialization />
+      </flowStep>
+      <step id="After update" name="After update">
+        <logic>
+          <cc:choose>
+            <cc:when test="${flowStatus == &apos;ok&apos;}">
+              <fl:next step="Common share now" label="OK" />
+            </cc:when>
+            <cc:when test="${flowStatus == &apos;error&apos;}">
+              <fl:next label="Error" step="Error" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next label="Otherwise" step="Cancel" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <flowStep id="Common share now"
+                name="Common share now"
+                sequenceID="ShareNow"
+                sequenceSrc="${dynamoCommonEngage}"
+                nextStep="After share now"
+                step="After share now">
+        <initialization />
+      </flowStep>
+      <step id="After share now" name="After share now">
+        <logic>
+          <cc:choose>
+            <cc:when test="${flowStatus == &apos;error&apos;}">
+              <fl:next label="Error" step="Error" />
+            </cc:when>
+            <cc:when test="${flowStatus == &apos;cancel&apos;}">
+              <fl:next label="Cancel" step="Cancel" />
+            </cc:when>
+            <cc:otherwise>
+              <fl:next label="OK" step="OK" />
+            </cc:otherwise>
+          </cc:choose>
+        </logic>
+      </step>
+      <step id="OK" name="OK">
+        <logic>
+          <cv:set var="flowStatus" value="ok" />
+        </logic>
+      </step>
+      <step id="Error" name="Error">
+        <logic>
+          <cv:set var="flowStatus" value="error" />
+        </logic>
+      </step>
+      <step id="Cancel" name="Cancel">
+        <logic>
+          <cv:set var="flowStatus" value="cancel" />
+        </logic>
+      </step>
+    </steps>
+  </startFlow>
+</flowSequence>

@@ -1,0 +1,124 @@
+<!DOCTYPE html><html><head><meta charset="utf-8" /><meta name="dynamo-type" content="document" />
+	<title>Dynamo Template</title>
+	<script type="xml/dyn-controller">
+    <constructor>
+      <code>
+
+	      </code>
+    </constructor>
+  </script>
+	<link href="Styles/style.css" rel="stylesheet" type="dynamo/css" />
+	
+	
+	
+	
+</head>
+
+<body class="" style="cursor: auto;">
+<div class="document"><p class="large-font" dyn-content="dynDocName">&lt;document&gt;</p><h2 dyn-content="asdasd" id="generic-il2h-s6wn">Document Info</h2><table class="no-borders" style="width: 100%;">
+	<colgroup>
+		<col style="width: 30%;" />
+		<col />
+	</colgroup>
+	<tbody>
+		<tr>
+			<td>Status</td>
+			<td><span class="inline dyn-tagged" dyn-content="dynDocStatus" dyn-editable="false">&lt;dynDocStatus&gt;</span></td>
+		</tr>
+		<tr>
+			<td>Saved version number</td>
+			<td><span class="inline dyn-tagged" dyn-content="versionNumberSaved" dyn-editable="false" dyn-if="not empty versionNumberSaved">&lt;versionNumber&gt;</span></td>
+		</tr>
+		<tr>
+			<td>Last data refresh</td>
+			<td><span dyn-content="lastDataRefresh" dyn-if="not empty lastDataRefresh">&lt;lastDataRefresh&gt;</span></td>
+		</tr>
+		<tr>
+			<td>Record ID</td>
+			<td><span class="inline dyn-tagged" dyn-content="dynDoc.Id" dyn-editable="false">&lt;Record ID&gt;</span></td>
+		</tr>
+	</tbody>
+</table><h2 dyn-if="not empty publishURL">Share Info</h2><table class="no-borders" dyn-if="not empty publishURL" style="width: 100%;">
+	<colgroup>
+		<col style="width: 30%;" />
+		<col />
+	</colgroup>
+	<tbody>
+		<tr>
+			<td>Share date</td>
+			<td><span dyn-content="publicationDate">&lt;date&gt;</span></td>
+		</tr>
+		<tr>
+			<td>Expires</td>
+			<td><span class="inline dyn-tagged" dyn-content="publicationExpires" dyn-editable="false">&lt;publicationExpires&gt;</span></td>
+		</tr>
+		<tr>
+			<td>Share URL</td>
+			<td><span class="inline dyn-tagged small-font" dyn-content="publishURL" dyn-editable="false">&lt;publishURL&gt;</span></td>
+		</tr>
+	</tbody>
+</table><h2 dyn-if="not  empty conf.signers">Signatures</h2><div class="group" dyn-if="not  empty conf.signers" dyn-repeat="conf.signers" dyn-repeat-var="signer" dyn-repeat-var-status="signerStatus">
+<p><strong>Signer</strong> <span class="bold" dyn-content="signerStatus.count">&lt;n&gt;</span>&#160;-&#160;<span dyn-content="signer.status" dyn-if="not empty signer.status">&lt;status&gt;</span>&#160;<span dyn-content="signer.date" dyn-if="not empty signer.date">&lt;sign date&gt;</span></p>
+
+<p id="generic-15ww-jiv5"><span dyn-content="signer.company">&lt;company&gt;</span></p>
+
+<p id="generic-2ywy-ufoz"><span dyn-content="signer.fullName">&lt;full name&gt;</span>&#160; (<span class="italic" dyn-content="signer.email">&lt;email&gt;</span>)</p>
+
+<p class="small-font" dyn-if="not empty signer.clientIP" id="generic-t32h-sc40">IP number: <span dyn-content="signer.clientIP">&lt;ip number&gt;</span>&#160;</p>
+
+<p id="generic-lg5o-uv6e">&#160;</p>
+</div><h2 id="generic-5d0j-bdn7">All Events</h2><table style="width: 100%;">
+	<colgroup>
+		<col style="width: 10%;" />
+		<col style="width: 10%;" />
+		<col style="width: 10%;" />
+		<col />
+	</colgroup>
+	<thead>
+		<tr>
+			<th scope="col">Date</th>
+			<th scope="col">Time</th>
+			<th scope="col">Type</th>
+			<th scope="col">Message</th>
+		</tr>
+	</thead>
+	<tbody data-tag-uuid="ed0e8189-ae03-411a-b29f-b62518996575" dyn-repeat="allActivity" dyn-repeat-var="i">
+		<tr>
+			<td>
+			<p><span class="inline dyn-tagged" dyn-content="i.CreatedDate" dyn-content-format="&#039;ddMMyy&#039;" dyn-editable="false">ddmmyy</span></p>
+			</td>
+			<td>
+			<p><span class="inline dyn-tagged" dyn-content="i.CreatedDate" dyn-content-format="&#039;HHmm&#039;" dyn-editable="false">hhmm</span></p>
+			</td>
+			<td>
+			<p><span class="inline dyn-tagged" dyn-content="i.dynamo__Type__c" dyn-editable="false">type</span></p>
+			</td>
+			<td>
+			<p><span class="inline dyn-tagged" dyn-content="i.dynamo__Message__c" dyn-editable="false">text</span></p>
+			</td>
+		</tr>
+	</tbody>
+</table><p class="font-small-x085">&#160;</p></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

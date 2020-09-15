@@ -1,0 +1,28 @@
+<html xmlns="http://dynamo.documill.com/schemas/HTMLScreen" id="PreviewScreen.html" name="PreviewScreen.html"><head>
+    <meta charset="utf-8" />
+    <meta content="form" name="dynamo-type" />
+    <link href="style.css" rel="stylesheet" type="dynamo/css" />
+  </head>
+  <body>
+    <div id="screen-container" class="screen slds">
+      <div id="screen-header" class="group">
+        <div id="screen-header-left"></div>
+        <div id="screen-header-center">
+          <div class="slds-button-group" role="group">
+            <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="accept" dyn-next-message="Thank you - sending notification to happy sales rep" dyn-if="buttonAccept">Accept</button>
+            <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="comment" dyn-if="buttonComment" dyn-next-message="Opening comment form">Comment</button>
+            <button type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" dyn-next-message="Rejecting - please tell why" name="reject" dyn-if="buttonReject">Reject</button>
+          </div>
+        </div>
+        <div id="screen-header-right" class="button-group">
+          <button style="color: firebrick" type="submit" dyn-next="Handle buttons" class="form-inline slds-button slds-button--neutral" name="exit" dyn-next-message="Goodbye">Exit</button>
+        </div>
+      </div>
+      <div id="screen-content" class="group">
+        <dyn-pdf-viewer source="${fullPDF}">
+          <div></div>
+        </dyn-pdf-viewer>
+      </div>
+    </div>
+  
+</body></html>

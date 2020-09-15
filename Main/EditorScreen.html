@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" id="Main/EditorScreen.html" name="Main/Edit with ChatterScreen.html">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="dynamo-type" content="form" />
+  <link rel="stylesheet" type="dynamo/css" href="Main/style.css" />
+  <link rel="stylesheet" type="dynamo/css" href="Styles/style.css" />
+</head>
+
+<body>
+  <div id="screen-container" class="screen slds">
+    <div id="screen-header">
+      <div id="screen-header-left">
+        <span dyn-if="not empty versionNumberSaved">  version </span><span dyn-if="not empty versionNumberSaved" dyn-content="versionNumberSaved">[version]</span>
+        <span dyn-if="not empty saveTime"> | saved </span><span dyn-content="saveTime" dyn-if="not empty saveTime" dyn-content-format="'justTime'">[dateTime]</span>
+      </div>
+      <div id="screen-header-center" style="font-size: 1.5em"><span dyn-content="fileName">[Dynamo Document Name]</span></div>
+
+
+      <div id="screen-header-right" class="button-group">
+        <button class="form-inline slds-button slds-button--neutral" dyn-next="Cancel" type="submit" name="cancel" dyn-submit="false">Cancel</button>
+        <button class="form-inline slds-button slds-button--neutral slds-button--brand" dyn-next="Update" dyn-next-message="Saving..." type="submit" name="save">Save</button>
+
+
+      </div>
+    </div>
+    <div id="screen-content">
+      <div id="screen-content-left" dyn-if="useCommentPane" class="group">
+        <dyn-sfdc-chatter-doclinker record-id="dynDocId" mention-options="mentionOptions" starting-post-id="postID"></dyn-sfdc-chatter-doclinker>
+      </div>
+      <div id="screen-content-center">
+        <div id="editable-toolbarContainer"> </div>
+        <div class="group" id="screen-document" dyn-content="composedDocEdit">Main Content document is missing!</div>
+      </div>
+      <div id="screen-content-right" dyn-if="useClausePane and empty externalFeed" class="group">
+        <dyn-sfdc-record-picker content-field="dynamo__Clause_Text__c" filter-fields="dynamo__Clause_Language__c,dynamo__Category__c,Subcategory__c" name="selectedRecord" object="dynamo__Clause__c" recent-tab-label="Recent Clauses" search-tab-label="Search" title-field="dynamo__Title__c"></dyn-sfdc-record-picker>
+      </div>
+
+      <div id="screen-content-right" dyn-if="not empty externalFeed" class="group">
+        <dyn-sfdc-feed-doclinker view-only="externalFeedViewOnly" feed-source="externalFeed" object-type="'dynamo__Dynamo_Document_Event__c'" content-field="'dynamo__Message__c'" fields-set-on-create="externalFeedFields" comment-source="externalReplyFeed" comment-object-type="'dynamo__Dynamo_Document_Event__c'"
+          comment-content-field="'dynamo__Message__c'" comment-fields-set-on-create="externalReplyFeedFields" comment-link-field="'dynamo__Parent_Event__c'"></dyn-sfdc-feed-doclinker>
+      </div>
+
+
+    </div>
+  </div>
+
+
+</body>
+
+</html>
